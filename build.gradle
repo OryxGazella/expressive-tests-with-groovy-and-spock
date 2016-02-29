@@ -1,5 +1,17 @@
+plugins {
+    id "net.ltgt.apt" version "0.5"
+}
+
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'idea'
+
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.5'
+    }
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -15,6 +27,7 @@ ext {
     sourceCompatibility = 1.8
 }
 
+
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.5'
     compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -25,6 +38,8 @@ dependencies {
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'junit:junit:4.12'
+    compileOnly "org.immutables:value:2.1.12"
+    apt "org.immutables:value:2.1.12" // for annotation processor
 }
 
 task run(dependsOn: classes, type: JavaExec) {
