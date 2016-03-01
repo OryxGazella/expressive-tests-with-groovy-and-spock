@@ -39,16 +39,15 @@ public class Main {
             Gdx.input.setInputProcessor(userControls);
 
             Observable.combineLatest(controlsObservable, ticks, (c, t) -> c)
-                    .subscribe((c) -> {
+                    .scan(new float[]{0.0f, 0.0f}, GameLogic::applyLogic)
+                    .subscribe((xy) -> {
                         Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
                         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
                         batch.setProjectionMatrix(camera.combined);
                         batch.begin();
-                        sprite.translate(
-                                c.moveRight() ? 0.005f : c.moveLeft() ? -0.005f : 0.0f,
-                                c.moveUp() ? 0.005f : c.moveDown() ? -0.005f : 0.0f);
-
+                        sprite.setX(xy[0]);
+                        sprite.setY(xy[1]);
                         sprite.draw(batch);
                         batch.end();
                     });
