@@ -27,8 +27,10 @@ public class Main {
         private PublishSubject<Float> ticks = PublishSubject.create();
         private OrthographicCamera camera;
         private SpriteBatch batch;
-        private Texture texture;
-        private Sprite sprite;
+        private Texture butterflyTexture;
+        private Sprite butterfly;
+        private Sprite clouds;
+        private Texture cloudTexture;
 
         @Override
         public void create() {
@@ -46,9 +48,12 @@ public class Main {
 
                         batch.setProjectionMatrix(camera.combined);
                         batch.begin();
-                        sprite.setX(xy[0]);
-                        sprite.setY(xy[1]);
-                        sprite.draw(batch);
+                        butterfly.setX(xy[0]);
+                        butterfly.setY(xy[1]);
+                        clouds.translate(0.0f, -0.001f);
+                        clouds.draw(batch);
+                        if(clouds.getY() < -3.0f) clouds.setY(-0.33f);
+                        butterfly.draw(batch);
                         batch.end();
                     });
         }
@@ -60,15 +65,24 @@ public class Main {
             camera = new OrthographicCamera(1, h / w);
             batch = new SpriteBatch();
 
-            texture = new Texture(Gdx.files.internal("butterfly.png"));
-            texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            butterflyTexture = new Texture(Gdx.files.internal("butterfly.png"));
+            butterflyTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-            TextureRegion region = new TextureRegion(texture, 0, 0, 512, 512);
+            TextureRegion butterflyRegion = new TextureRegion(butterflyTexture, 0, 0, 512, 512);
 
-            sprite = new Sprite(region);
-            sprite.setSize(0.08f, 0.08f);
-            sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-            sprite.setPosition(-sprite.getWidth() / 2, -sprite.getHeight() / 2);
+            butterfly = new Sprite(butterflyRegion);
+            butterfly.setSize(0.08f, 0.08f);
+            butterfly.setOrigin(butterfly.getWidth() / 2, butterfly.getHeight() / 2);
+            butterfly.setPosition(-butterfly.getWidth() / 2, -butterfly.getHeight() / 2);
+
+            cloudTexture = new Texture(Gdx.files.internal("clouds.png"));
+            cloudTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            cloudTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+            TextureRegion cloudRegion = new TextureRegion(cloudTexture, 0, 0, 1440, 4968);
+            clouds = new Sprite(cloudRegion);
+            clouds.setSize(1.0f, 3.44305555556f);
+            clouds.setPosition(-0.5f, -0.33f);
         }
 
         @Override
