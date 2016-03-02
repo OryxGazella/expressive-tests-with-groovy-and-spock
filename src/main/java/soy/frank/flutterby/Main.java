@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import rx.Observable;
 import rx.subjects.PublishSubject;
 import soy.frank.flutterby.actors.ImmutableScene;
 import soy.frank.flutterby.actors.PhysicalEntity;
@@ -38,12 +37,10 @@ public class Main {
 
         @Override
         public void create() {
-            UserControls userControls = new UserControls();
-            Gdx.input.setInputProcessor(userControls);
-
             renderer = new Renderer();
 
-            Observable.combineLatest(userControls.controlsObservable(), ticks, (c, t) -> c)
+            ticks
+                    .map(unused -> UserControls.pollKeysPressed())
                     .scan(initialScene, GameLogic::applyLogic)
                     .subscribe(renderer::render);
         }
