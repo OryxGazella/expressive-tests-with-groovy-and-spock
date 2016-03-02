@@ -13,7 +13,6 @@ import soy.frank.flutterby.actors.Vector2D;
 
 public class Renderer implements Disposable {
 
-    private final OrthographicCamera camera;
     private final SpriteBatch batch;
     private final Sprite butterfly;
     private final Sprite clouds;
@@ -28,8 +27,9 @@ public class Renderer implements Disposable {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
-        camera = new OrthographicCamera(1, h / w);
+        OrthographicCamera camera = new OrthographicCamera(1, h / w);
         batch = new SpriteBatch();
+        batch.setProjectionMatrix(camera.combined);
 
         butterflyTexture = new Texture(Gdx.files.internal("butterfly.png"));
         butterflyTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -62,34 +62,37 @@ public class Renderer implements Disposable {
     }
 
     public void render(Scene actors) {
-        Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        clearScreen();
 
-        batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        moveBackground();
+        drawSprites(actors);
+
+        batch.end();
+    }
+
+    private void clearScreen() {
+        Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+
+    private void drawSprites(Scene actors) {
+        drawSpriteAtPosition(actors.butterfly().position(), butterfly);
+        actors.lasers().forEach(l -> drawSpriteAtPosition(l.position(), laser));
+        actors.dragonflies().forEach(df -> drawSpriteAtPosition(df.position(), dragonfly));
+    }
+
+    private void moveBackground() {
         clouds.translate(0.0f, -0.001f);
         clouds.draw(batch);
         if (clouds.getY() < -3.0f) clouds.setY(-0.33f);
+    }
 
-        Vector2D butterflyPosition = actors.butterfly().position();
-        butterfly.setX(butterflyPosition.x());
-        butterfly.setY(butterflyPosition.y());
-        butterfly.draw(batch);
-
-        actors.lasers().forEach(l -> {
-            laser.setX(l.position().x());
-            laser.setY(l.position().y());
-            laser.draw(batch);
-        });
-
-        actors.dragonflies().forEach(df -> {
-            dragonfly.setX(df.position().x());
-            dragonfly.setY(df.position().y());
-            dragonfly.draw(batch);
-        });
-
-        batch.end();
+    private void drawSpriteAtPosition(Vector2D position, Sprite sprite) {
+        sprite.setX(position.x());
+        sprite.setY(position.y());
+        sprite.draw(batch);
     }
 
     @Override
