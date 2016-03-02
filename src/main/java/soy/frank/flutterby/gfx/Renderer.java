@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
+import soy.frank.flutterby.actors.Scene;
+import soy.frank.flutterby.actors.Vector2D;
 
 public class Renderer implements Disposable {
 
@@ -42,7 +44,7 @@ public class Renderer implements Disposable {
         TextureRegion cloudRegion = new TextureRegion(cloudTexture, 0, 0, 1440, 4968);
         clouds = new Sprite(cloudRegion);
         clouds.setSize(1.0f, 3.44305555556f);
-        clouds.setPosition(-0.5f, -0.33f);
+        clouds.setPosition(-0.505f, -0.33f);
 
         laserTexture = new Texture(Gdx.files.internal("laser.png"));
         laserTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -50,8 +52,6 @@ public class Renderer implements Disposable {
         TextureRegion laserRegion = new TextureRegion(laserTexture, 0, 0, 16, 121);
         laser = new Sprite(laserRegion);
         laser.setSize(0.01f, 0.075625f);
-        laser.setPosition(butterfly.getWidth() / 2 - (laser.getWidth() / 2), butterfly.getHeight());
-        laser.setOrigin(laser.getWidth() / 2, laser.getHeight() / 2);
 
         dragonflyTexture = new Texture(Gdx.files.internal("dragonfly.png"));
         dragonflyTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -59,24 +59,36 @@ public class Renderer implements Disposable {
         TextureRegion dragonflyRegion = new TextureRegion(dragonflyTexture, 0, 0, 512, 207);
         dragonfly = new Sprite(dragonflyRegion);
         dragonfly.setSize(0.08f, 0.03234375f);
-        dragonfly.setPosition(butterfly.getWidth() * 3 / 2 - (dragonfly.getWidth() / 2), butterfly.getHeight() * 2);
-        dragonfly.setOrigin(dragonfly.getWidth() / 2, dragonfly.getHeight() / 2);
     }
 
-    public void render(float[] xy) {
+    public void render(Scene actors) {
         Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        butterfly.setX(xy[0]);
-        butterfly.setY(xy[1]);
+
         clouds.translate(0.0f, -0.001f);
         clouds.draw(batch);
         if (clouds.getY() < -3.0f) clouds.setY(-0.33f);
+
+        Vector2D butterflyPosition = actors.butterfly().position();
+        butterfly.setX(butterflyPosition.x());
+        butterfly.setY(butterflyPosition.y());
         butterfly.draw(batch);
-        laser.draw(batch);
-        dragonfly.draw(batch);
+
+        actors.lasers().forEach(l -> {
+            laser.setX(l.position().x());
+            laser.setY(l.position().y());
+            laser.draw(batch);
+        });
+
+        actors.dragonflies().forEach(df -> {
+            dragonfly.setX(df.position().x());
+            dragonfly.setY(df.position().y());
+            dragonfly.draw(batch);
+        });
+
         batch.end();
     }
 

@@ -6,15 +6,19 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.Observable;
 import rx.subjects.PublishSubject;
+import soy.frank.flutterby.actors.*;
 import soy.frank.flutterby.gfx.Renderer;
-import soy.frank.flutterby.input.ButterflyControls;
 import soy.frank.flutterby.input.UserControls;
+
+import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.height = 720;
         config.width = 1024;
+        config.fullscreen = true;
+        config.title = "Flutterby";
         new LwjglApplication(new Listener(), config);
     }
 
@@ -22,18 +26,27 @@ public class Main {
 
         private PublishSubject<Float> ticks = PublishSubject.create();
         private Renderer renderer;
+        private final Scene initialScene;
+
+        public Listener() {
+            initialScene = ImmutableScene
+                    .builder()
+                    .butterfly(PhysicalEntity.createButterfly())
+                    .dragonflies(Collections.singleton(ImmutablePhysicalEntity.builder().position(Vector2D.of(-0.2f, -0.02f)).build()))
+                    .lasers(Collections.emptyList())
+                    .build();
+        }
 
 
         @Override
         public void create() {
             UserControls userControls = new UserControls();
-            Observable<ButterflyControls> controlsObservable = userControls.controlsObservable();
             Gdx.input.setInputProcessor(userControls);
 
             renderer = new Renderer();
 
-            Observable.combineLatest(controlsObservable, ticks, (c, t) -> c)
-                    .scan(new float[]{0.0f, 0.0f}, GameLogic::applyLogic)
+            Observable.combineLatest(userControls.controlsObservable(), ticks, (c, t) -> c)
+                    .scan(initialScene, GameLogic::applyLogic)
                     .subscribe(renderer::render);
         }
 
