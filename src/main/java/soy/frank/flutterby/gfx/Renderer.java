@@ -11,54 +11,44 @@ import com.badlogic.gdx.utils.Disposable;
 import soy.frank.flutterby.actors.Scene;
 import soy.frank.flutterby.actors.Vector2D;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Renderer implements Disposable {
 
     private final SpriteBatch batch;
-    private final Sprite butterfly;
     private final Sprite clouds;
     private final Sprite laser;
-    private final Texture cloudTexture;
-    private final Texture butterflyTexture;
-    private final Texture laserTexture;
-    private final Texture dragonflyTexture;
+
+    private final Map<String, Texture> textures = new HashMap<>();
+
     private final Sprite dragonfly;
+    private final Sprite butterfly;
 
     public Renderer() {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
 
-        OrthographicCamera camera = new OrthographicCamera(1, h / w);
+        OrthographicCamera camera = new OrthographicCamera(1, (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth());
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
 
-        butterflyTexture = new Texture(Gdx.files.internal("butterfly.png"));
-        butterflyTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        TextureRegion butterflyRegion = new TextureRegion(butterflyTexture, 0, 0, 512, 512);
-        butterfly = new Sprite(butterflyRegion);
-        butterfly.setSize(0.08f, 0.08f);
-        butterfly.setOrigin(butterfly.getWidth() / 2, butterfly.getHeight() / 2);
+        butterfly = createSprite("butterfly.png", 512, 512, 0.08f, 0.08f);
+        clouds = createSprite("clouds.png", 1440, 4968, 1.0f, 3.44305555556f);
+        laser = createSprite("laser.png", 16, 121, 0.01f, 0.075625f);
+        dragonfly = createSprite("dragonfly.png", 512, 207, 0.08f, 0.03234375f);
 
-        cloudTexture = new Texture(Gdx.files.internal("clouds.png"));
-        cloudTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        cloudTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-        TextureRegion cloudRegion = new TextureRegion(cloudTexture, 0, 0, 1440, 4968);
-        clouds = new Sprite(cloudRegion);
-        clouds.setSize(1.0f, 3.44305555556f);
         clouds.setPosition(-0.505f, -0.33f);
+    }
 
-        laserTexture = new Texture(Gdx.files.internal("laser.png"));
-        laserTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        laserTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-        TextureRegion laserRegion = new TextureRegion(laserTexture, 0, 0, 16, 121);
-        laser = new Sprite(laserRegion);
-        laser.setSize(0.01f, 0.075625f);
+    private Sprite createSprite(String imagePath, int imageWidth, int imageHeight, float width, float height) {
+        Sprite sprite;
+        Texture texture = new Texture(Gdx.files.internal(imagePath));
+        textures.put("imagePath", texture);
+        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        TextureRegion region = new TextureRegion(texture, 0, 0, imageWidth, imageHeight);
+        sprite = new Sprite(region);
+        sprite.setSize(width, height);
 
-        dragonflyTexture = new Texture(Gdx.files.internal("dragonfly.png"));
-        dragonflyTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        dragonflyTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-        TextureRegion dragonflyRegion = new TextureRegion(dragonflyTexture, 0, 0, 512, 207);
-        dragonfly = new Sprite(dragonflyRegion);
-        dragonfly.setSize(0.08f, 0.03234375f);
+        return sprite;
     }
 
     public void render(Scene actors) {
@@ -97,9 +87,6 @@ public class Renderer implements Disposable {
 
     @Override
     public void dispose() {
-        cloudTexture.dispose();
-        butterflyTexture.dispose();
-        laserTexture.dispose();
-        dragonflyTexture.dispose();
+        textures.values().forEach(Texture::dispose);
     }
 }
