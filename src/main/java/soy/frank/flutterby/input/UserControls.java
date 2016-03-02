@@ -1,14 +1,14 @@
-package soy.frank.flutterby;
+package soy.frank.flutterby.input;
 
 import com.badlogic.gdx.Input.*;
 import com.badlogic.gdx.InputAdapter;
 import com.google.common.collect.ImmutableSet;
 import rx.Observable;
 import rx.subjects.PublishSubject;
-import soy.frank.flutterby.types.ButterflyControls;
-import soy.frank.flutterby.types.ImmutableButterflyControls;
-import soy.frank.flutterby.types.ImmutableKeyEvent;
-import soy.frank.flutterby.types.KeyEvent;
+import soy.frank.flutterby.input.ButterflyControls;
+import soy.frank.flutterby.input.ImmutableButterflyControls;
+import soy.frank.flutterby.input.ImmutableKeyEvent;
+import soy.frank.flutterby.input.KeyEvent;
 
 public class UserControls extends InputAdapter {
 

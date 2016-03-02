@@ -1,4 +1,4 @@
-package soy.frank.flutterby.types;
+package soy.frank.flutterby.input;
 
 import org.immutables.value.Value;
 

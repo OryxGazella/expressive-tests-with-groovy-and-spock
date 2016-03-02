@@ -12,7 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import rx.Observable;
 import rx.subjects.PublishSubject;
-import soy.frank.flutterby.types.ButterflyControls;
+import soy.frank.flutterby.input.ButterflyControls;
+import soy.frank.flutterby.input.UserControls;
 
 public class Main {
     public static void main(String[] args) {
