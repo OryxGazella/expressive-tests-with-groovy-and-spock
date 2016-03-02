@@ -6,11 +6,11 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.Observable;
 import rx.subjects.PublishSubject;
-import soy.frank.flutterby.actors.*;
+import soy.frank.flutterby.actors.ImmutableScene;
+import soy.frank.flutterby.actors.PhysicalEntity;
+import soy.frank.flutterby.actors.Scene;
 import soy.frank.flutterby.gfx.Renderer;
 import soy.frank.flutterby.input.UserControls;
-
-import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
@@ -32,8 +32,6 @@ public class Main {
             initialScene = ImmutableScene
                     .builder()
                     .butterfly(PhysicalEntity.createButterfly())
-                    .dragonflies(Collections.singleton(ImmutablePhysicalEntity.builder().position(Vector2D.of(-0.2f, -0.02f)).build()))
-                    .lasers(Collections.emptyList())
                     .build();
         }
 
