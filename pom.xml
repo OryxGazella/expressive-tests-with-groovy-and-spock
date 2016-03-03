@@ -105,7 +105,7 @@
                 <configuration>
                     <testSources>
                         <testSource>
-                            <directory>src/test/groovy</directory>
+                            <directory>src/test/java</directory>
                             <includes>
                                 <include>**/*.groovy</include>
                             </includes>
