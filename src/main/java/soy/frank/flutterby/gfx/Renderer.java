@@ -8,8 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
-import soy.frank.flutterby.actors.Scene;
-import soy.frank.flutterby.actors.Vector2D;
+import soy.frank.flutterby.actors.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +30,12 @@ public class Renderer implements Disposable {
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
 
-        butterfly = createSprite("butterfly.png", 512, 512, 0.08f, 0.08f);
+        butterfly = createSprite("butterfly.png", 512, 512, Butterfly.WIDTH, Butterfly.HEIGHT);
         clouds = createSprite("clouds.png", 1440, 4968, 1.0f, 3.44305555556f);
-        laser = createSprite("laser.png", 16, 121, 0.01f, 0.075625f);
-        dragonfly = createSprite("dragonfly.png", 512, 207, 0.08f, 0.03234375f);
+        laser = createSprite("laser.png", 16, 121, Laser.WIDTH, Laser.HEIGHT);
+        dragonfly = createSprite("dragonfly.png", 512, 207, DragonFly.WIDTH, DragonFly.HEIGHT);
 
-        clouds.setPosition(-0.505f, -0.33f);
+        clouds.setPosition(-0.5f, -0.33f);
     }
 
     private Sprite createSprite(String imagePath, int imageWidth, int imageHeight, float width, float height) {

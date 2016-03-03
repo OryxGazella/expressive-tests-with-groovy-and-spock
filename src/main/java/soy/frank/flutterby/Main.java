@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.subjects.PublishSubject;
+import soy.frank.flutterby.actors.Butterfly;
 import soy.frank.flutterby.actors.ImmutableScene;
 import soy.frank.flutterby.actors.PhysicalEntity;
 import soy.frank.flutterby.actors.Scene;
@@ -30,7 +31,7 @@ public class Main {
         public Listener() {
             initialScene = ImmutableScene
                     .builder()
-                    .butterfly(PhysicalEntity.createButterfly())
+                    .butterfly(PhysicalEntity.createButterfly(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2))
                     .build();
         }
 

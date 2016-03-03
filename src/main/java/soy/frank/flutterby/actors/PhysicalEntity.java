@@ -5,9 +5,6 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class PhysicalEntity {
 
-    public static final float BUTTERFLY_WIDTH = 0.08f;
-    public static final float BUTTERFLY_HEIGHT = 0.08f;
-
     @Value.Default
     public Vector2D position() {
         return Vector2D.of(0.0f, 0.0f);
@@ -33,11 +30,15 @@ public abstract class PhysicalEntity {
         return 0.0f;
     }
 
-    public static PhysicalEntity createButterfly() {
+    public static PhysicalEntity createButterfly(float x, float y) {
+        return createEntity(x, y, Butterfly.WIDTH, Butterfly.HEIGHT);
+    }
+
+    public static PhysicalEntity createEntity(float x, float y, float width, float height) {
         return ImmutablePhysicalEntity.builder()
-                .width(BUTTERFLY_WIDTH)
-                .height(BUTTERFLY_HEIGHT)
-                .position(Vector2D.of(-BUTTERFLY_WIDTH / 2, -BUTTERFLY_HEIGHT / 2))
+                .width(width)
+                .height(height)
+                .position(Vector2D.of(x, y))
                 .build();
     }
 }
