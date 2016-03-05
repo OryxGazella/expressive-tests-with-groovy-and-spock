@@ -15,8 +15,8 @@ import soy.frank.flutterby.input.UserControls;
 public class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.height = 900;
-        config.width = 1440;
+        config.width = 1920;
+        config.height = 1080;
         config.fullscreen = true;
         config.title = "Flutterby";
         new LwjglApplication(new Listener(), config);
