@@ -5,12 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.subjects.PublishSubject;
-import soy.frank.flutterby.actors.Butterfly;
-import soy.frank.flutterby.actors.ImmutableScene;
-import soy.frank.flutterby.actors.PhysicalEntity;
-import soy.frank.flutterby.actors.Scene;
+import soy.frank.flutterby.actors.*;
 import soy.frank.flutterby.gfx.Renderer;
 import soy.frank.flutterby.input.UserControls;
+
+import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,12 +25,14 @@ public class Main {
 
         private PublishSubject<Float> ticks = PublishSubject.create();
         private Renderer renderer;
-        private final Scene initialScene;
+        private final Scene staticScene;
 
         public Listener() {
-            initialScene = ImmutableScene
+            staticScene = ImmutableScene
                     .builder()
-                    .butterfly(PhysicalEntity.createButterfly(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2))
+                    .butterfly(PhysicalEntity.createButterfly(-Butterfly.WIDTH / 2, 0f))
+                    .lasers(Collections.singleton(PhysicalEntity.createButterfly(-Laser.WIDTH / 2,  1.5f * Butterfly.HEIGHT)))
+                    .dragonflies(Collections.singleton(PhysicalEntity.createButterfly(-DragonFly.WIDTH / 2, 3f * Butterfly.HEIGHT)))
                     .build();
         }
 
@@ -42,7 +43,7 @@ public class Main {
 
             ticks
                     .map(unused -> UserControls.pollKeysPressed())
-                    .scan(initialScene, GameLogic::applyLogic)
+                    .scan(staticScene, GameLogic::applyLogic)
                     .subscribe(renderer::render);
         }
 
