@@ -30,14 +30,16 @@ public abstract class PhysicalEntity {
         return 0.0f;
     }
 
-    public static PhysicalEntity createButterfly(float x, float y) {
-        return createEntity(x, y, Butterfly.WIDTH, Butterfly.HEIGHT);
+    public static PhysicalEntity createButterflyAt(float x, float y) {
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder().width(Butterfly.WIDTH).height(Butterfly.HEIGHT));
     }
 
-    public static PhysicalEntity createEntity(float x, float y, float width, float height) {
-        return ImmutablePhysicalEntity.builder()
-                .width(width)
-                .height(height)
+    public static PhysicalEntity createLaserAt(float x, float y) {
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder().width(Laser.WIDTH).height(Laser.HEIGHT));
+    }
+
+    private static PhysicalEntity createPhysicalEntityAt(float x, float y, ImmutablePhysicalEntity.Builder builder) {
+        return builder
                 .position(Vector2D.of(x, y))
                 .build();
     }
