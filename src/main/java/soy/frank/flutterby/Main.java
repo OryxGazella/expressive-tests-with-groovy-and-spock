@@ -31,7 +31,7 @@ public class Main {
         public Listener() {
             initialScene = ImmutableScene
                     .builder()
-                    .butterfly(PhysicalEntity.createButterfly(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2))
+                    .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2))
                     .build();
         }
 

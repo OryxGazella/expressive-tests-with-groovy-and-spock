@@ -1,7 +1,10 @@
 package soy.frank.flutterby
 
+import soy.frank.flutterby.actors.Butterfly
 import soy.frank.flutterby.actors.ImmutableScene
+import soy.frank.flutterby.actors.Laser
 import soy.frank.flutterby.actors.PhysicalEntity
+import soy.frank.flutterby.input.ButterflyControls
 import soy.frank.flutterby.input.ImmutableButterflyControls
 import spock.lang.Specification
 
@@ -10,7 +13,7 @@ class GameLogicTest extends Specification {
     public static final float velocity = 0.005f
     public static final initialX = 0.0f
     public static final initialY = 0.0f
-    public static final initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterfly(initialX, initialY)).build()
+    public static final initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
 
     def "Butterfly moves to the right"() {
         given:
@@ -73,4 +76,17 @@ class GameLogicTest extends Specification {
         xy.butterfly().position().y() == (initialY - velocity).toFloat()
     }
 
+    def "Butterfly spawns a laser in the center of its head when the fire control is sent"() {
+        given:
+        def fireControl = Stub(ButterflyControls) {
+            fire() >> true
+        }
+
+        when:
+        def resultingScene = GameLogic.applyLogic(initialScene, fireControl)
+
+        then:
+        resultingScene ==
+                initialScene.withLasers(PhysicalEntity.createLaserAt(Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float, Butterfly.HEIGHT))
+    }
 }
