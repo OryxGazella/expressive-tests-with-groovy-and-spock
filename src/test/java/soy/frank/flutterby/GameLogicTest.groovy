@@ -6,79 +6,41 @@ import soy.frank.flutterby.actors.Laser
 import soy.frank.flutterby.actors.PhysicalEntity
 import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class GameLogicTest extends Specification {
 
     public static final float velocity = 0.005f
     public static final initialX = 0.0f
     public static final initialY = 0.0f
-    public static
-    final initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
+    def static initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
 
-    def "Butterfly moves to the right"() {
-        given:
-        def movingRight = Stub(ButterflyControls) {
-            moveRight() >> true
-        }
+    @Unroll
+    def "Butterfly moving #direction is displaced by #displacement on the #axis axis"() {
+        expect:
+        GameLogic.applyLogic(initialScene, move(direction)).butterfly().position()."$axis"() == displacement
 
-        when:
-        def result = GameLogic.applyLogic(initialScene, movingRight)
-
-        then:
-        result.butterfly().position().x() == (initialX + velocity).toFloat()
+        where:
+        direction | displacement                    | axis
+        "up"      | (initialY + velocity).toFloat() | "y"
+        "right"   | (initialX + velocity).toFloat() | "x"
+        "down"    | (initialY - velocity).toFloat() | "y"
+        "left"    | (initialX - velocity).toFloat() | "x"
     }
 
-    def "Butterfly moves to the left"() {
-        given:
-        def movingLeft = Stub(ButterflyControls) {
-            moveLeft() >> true
-        }
-
-        when:
-        def result = GameLogic.applyLogic(initialScene, movingLeft)
-
-        then:
-        result.butterfly().position().x() == (initialX - velocity).toFloat()
-    }
-
-    def "Butterfly moves up"() {
-        given:
-        def movingUp = Stub(ButterflyControls) {
-            moveUp() >> true
-        }
-
-        when:
-        def xy = GameLogic.applyLogic(initialScene, movingUp)
-
-        then:
-        xy.butterfly().position().y() == (initialY + velocity).toFloat()
-    }
-
-    def "Butterfly moves down"() {
-        given:
-        def movingDown = Stub(ButterflyControls) {
-            moveDown() >> true
-        }
-
-        when:
-        def xy = GameLogic.applyLogic(initialScene, movingDown)
-
-        then:
-        xy.butterfly().position().y() == (initialY - velocity).toFloat()
+    private ButterflyControls move(String direction) {
+        def upperCase = direction.capitalize()
+        Stub(ButterflyControls) { "move$upperCase"() >> true }
     }
 
     def "Butterfly spawns a laser in the center of its head when the fire control is sent"() {
-        given:
-        def firing = Stub(ButterflyControls) {
-            fire() >> true
-        }
-
-        when:
-        def resultingScene = GameLogic.applyLogic(initialScene, firing)
-
-        then:
-        resultingScene ==
+        expect:
+        GameLogic.applyLogic(initialScene, fire()) ==
                 initialScene
                         .withLasers(PhysicalEntity.createLaserAt(Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float, Butterfly.HEIGHT))
+    }
+
+    ButterflyControls fire() {
+        Stub(ButterflyControls) { fire() >> true }
     }
 }
