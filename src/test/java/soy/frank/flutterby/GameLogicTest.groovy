@@ -5,7 +5,6 @@ import soy.frank.flutterby.actors.ImmutableScene
 import soy.frank.flutterby.actors.Laser
 import soy.frank.flutterby.actors.PhysicalEntity
 import soy.frank.flutterby.input.ButterflyControls
-import soy.frank.flutterby.input.ImmutableButterflyControls
 import spock.lang.Specification
 
 class GameLogicTest extends Specification {
@@ -13,19 +12,17 @@ class GameLogicTest extends Specification {
     public static final float velocity = 0.005f
     public static final initialX = 0.0f
     public static final initialY = 0.0f
-    public static final initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
+    public static
+    final initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
 
     def "Butterfly moves to the right"() {
         given:
-        def selectedMovement = ImmutableButterflyControls.builder()
-                .moveUp(false)
-                .moveRight(true)
-                .moveLeft(false)
-                .moveDown(false)
-                .fire(false).build()
+        def movingRight = Stub(ButterflyControls) {
+            moveRight() >> true
+        }
 
         when:
-        def result = GameLogic.applyLogic(initialScene, selectedMovement)
+        def result = GameLogic.applyLogic(initialScene, movingRight)
 
         then:
         result.butterfly().position().x() == (initialX + velocity).toFloat()
@@ -33,14 +30,12 @@ class GameLogicTest extends Specification {
 
     def "Butterfly moves to the left"() {
         given:
-        def selectedMovement = ImmutableButterflyControls.builder()
-                .moveUp(false)
-                .moveRight(false)
-                .moveLeft(true)
-                .moveDown(false)
-                .fire(false).build()
+        def movingLeft = Stub(ButterflyControls) {
+            moveLeft() >> true
+        }
+
         when:
-        def result = GameLogic.applyLogic(initialScene, selectedMovement)
+        def result = GameLogic.applyLogic(initialScene, movingLeft)
 
         then:
         result.butterfly().position().x() == (initialX - velocity).toFloat()
@@ -48,14 +43,12 @@ class GameLogicTest extends Specification {
 
     def "Butterfly moves up"() {
         given:
-        def selectedMovement = ImmutableButterflyControls.builder()
-                .moveUp(true)
-                .moveRight(false)
-                .moveLeft(false)
-                .moveDown(false)
-                .fire(false).build()
+        def movingUp = Stub(ButterflyControls) {
+            moveUp() >> true
+        }
+
         when:
-        def xy = GameLogic.applyLogic(initialScene, selectedMovement)
+        def xy = GameLogic.applyLogic(initialScene, movingUp)
 
         then:
         xy.butterfly().position().y() == (initialY + velocity).toFloat()
@@ -63,14 +56,12 @@ class GameLogicTest extends Specification {
 
     def "Butterfly moves down"() {
         given:
-        def selectedMovement = ImmutableButterflyControls.builder()
-                .moveUp(false)
-                .moveRight(false)
-                .moveLeft(false)
-                .moveDown(true)
-                .fire(false).build()
+        def movingDown = Stub(ButterflyControls) {
+            moveDown() >> true
+        }
+
         when:
-        def xy = GameLogic.applyLogic(initialScene, selectedMovement)
+        def xy = GameLogic.applyLogic(initialScene, movingDown)
 
         then:
         xy.butterfly().position().y() == (initialY - velocity).toFloat()
@@ -78,15 +69,16 @@ class GameLogicTest extends Specification {
 
     def "Butterfly spawns a laser in the center of its head when the fire control is sent"() {
         given:
-        def fireControl = Stub(ButterflyControls) {
+        def firing = Stub(ButterflyControls) {
             fire() >> true
         }
 
         when:
-        def resultingScene = GameLogic.applyLogic(initialScene, fireControl)
+        def resultingScene = GameLogic.applyLogic(initialScene, firing)
 
         then:
         resultingScene ==
-                initialScene.withLasers(PhysicalEntity.createLaserAt(Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float, Butterfly.HEIGHT))
+                initialScene
+                        .withLasers(PhysicalEntity.createLaserAt(Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float, Butterfly.HEIGHT))
     }
 }
