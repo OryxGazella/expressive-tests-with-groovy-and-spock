@@ -3,6 +3,9 @@ package soy.frank.flutterby;
 import soy.frank.flutterby.actors.*;
 import soy.frank.flutterby.input.ButterflyControls;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class GameLogic {
 
     public static Scene applyLogic(Scene actors, ButterflyControls controls) {
@@ -14,16 +17,19 @@ public class GameLogic {
                 Butterfly.VELOCITY
                 : controls.moveDown() ? -Butterfly.VELOCITY : 0.0f);
 
-        ImmutableScene.Builder sceneBuilder = ImmutableScene.builder().from(actors);
+
+        Stream<PhysicalEntity> laserStream = actors.lasers().stream()
+                .map(l -> PhysicalEntity.createLaserAt(l.position().x(), l.position().y() + Laser.VELOCITY));
 
         if(controls.fire()) {
-            sceneBuilder.addLasers(PhysicalEntity
-                    .createLaserAt(butterflyX + Butterfly.WIDTH / 2 - Laser.WIDTH / 2, butterflyY + Butterfly.HEIGHT));
+            laserStream = Stream.concat(laserStream, Stream.of(PhysicalEntity
+                    .createLaserAt(butterflyX + Butterfly.WIDTH / 2 - Laser.WIDTH / 2, butterflyY + Butterfly.HEIGHT)));
         }
 
-        return sceneBuilder
-                .butterfly(ImmutablePhysicalEntity
+        return ImmutableScene.copyOf(actors)
+                .withLasers(laserStream.collect(Collectors.toList()))
+                .withButterfly(ImmutablePhysicalEntity
                         .copyOf(actors.butterfly())
-                        .withPosition(Vector2D.of(butterflyX, butterflyY))).build();
+                        .withPosition(Vector2D.of(butterflyX, butterflyY)));
     }
 }

@@ -40,6 +40,19 @@ class GameLogicTest extends Specification {
                         .withLasers(PhysicalEntity.createLaserAt(Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float, Butterfly.HEIGHT))
     }
 
+    def "A laser moves upwards, from where it is spawned by its velocity"() {
+        given:
+        def sceneWithLaser = initialScene.withLasers(PhysicalEntity.createLaserAt(0.0f, 0.0f))
+
+        when:
+        def resultingScene = GameLogic.applyLogic(sceneWithLaser, Stub(ButterflyControls) {
+            fire() >> false
+        })
+
+        then:
+        resultingScene == initialScene.withLasers(PhysicalEntity.createLaserAt(0.0f, Laser.VELOCITY))
+    }
+
     ButterflyControls fire() {
         Stub(ButterflyControls) { fire() >> true }
     }
