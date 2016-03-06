@@ -31,11 +31,20 @@ public abstract class PhysicalEntity {
     }
 
     public static PhysicalEntity createButterflyAt(float x, float y) {
-        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder().width(Butterfly.WIDTH).height(Butterfly.HEIGHT));
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
+                .width(Butterfly.WIDTH)
+                .height(Butterfly.HEIGHT)
+        );
     }
 
     public static PhysicalEntity createLaserAt(float x, float y) {
-        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder().width(Laser.WIDTH).height(Laser.HEIGHT));
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity
+                .builder()
+                .width(Laser.WIDTH)
+                .height(Laser.HEIGHT)
+                .velocity(Laser.VELOCITY)
+                .acceleration(Laser.ACCELERATION)
+        );
     }
 
     private static PhysicalEntity createPhysicalEntityAt(float x, float y, ImmutablePhysicalEntity.Builder builder) {

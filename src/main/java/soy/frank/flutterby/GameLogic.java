@@ -19,7 +19,12 @@ public class GameLogic {
 
 
         Stream<PhysicalEntity> laserStream = actors.lasers().stream()
-                .map(l -> PhysicalEntity.createLaserAt(l.position().x(), l.position().y() + Laser.VELOCITY));
+                .map(l -> {
+                    float resultingVelocity = l.velocity() + l.acceleration();
+                    return ImmutablePhysicalEntity.copyOf(l)
+                            .withPosition(Vector2D.of(l.position().x(), l.position().y() + resultingVelocity))
+                            .withVelocity(resultingVelocity);
+                });
 
         if(controls.fire()) {
             laserStream = Stream.concat(laserStream, Stream.of(PhysicalEntity
