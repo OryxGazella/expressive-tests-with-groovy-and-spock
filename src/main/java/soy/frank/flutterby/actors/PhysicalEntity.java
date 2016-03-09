@@ -30,10 +30,23 @@ public abstract class PhysicalEntity {
         return 0.0f;
     }
 
+    @Value.Default
+    public int cooldown() {
+        return 0;
+    }
+
     public static PhysicalEntity createButterflyAt(float x, float y) {
         return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
                 .width(Butterfly.WIDTH)
                 .height(Butterfly.HEIGHT)
+        );
+    }
+
+    public static PhysicalEntity createButterflyAt(float x, float y, int cooldown) {
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
+                .width(Butterfly.WIDTH)
+                .height(Butterfly.HEIGHT)
+                .cooldown(cooldown)
         );
     }
 

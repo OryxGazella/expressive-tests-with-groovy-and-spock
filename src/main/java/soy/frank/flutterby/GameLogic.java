@@ -26,15 +26,20 @@ public class GameLogic {
                             .withVelocity(resultingVelocity);
                 });
 
-        if(controls.fire()) {
+        int resultingCooldown = actors.butterfly().cooldown() - 1;
+        if (resultingCooldown < 0) resultingCooldown = 0;
+
+        if (controls.fire() && actors.butterfly().cooldown() <= 0) {
             laserStream = Stream.concat(laserStream, Stream.of(PhysicalEntity
                     .createLaserAt(butterflyX + Butterfly.WIDTH / 2 - Laser.WIDTH / 2, butterflyY + Butterfly.HEIGHT)));
+            resultingCooldown = 8;
         }
 
         return ImmutableScene.copyOf(actors)
                 .withLasers(laserStream.collect(Collectors.toList()))
                 .withButterfly(ImmutablePhysicalEntity
                         .copyOf(actors.butterfly())
-                        .withPosition(Vector2D.of(butterflyX, butterflyY)));
+                        .withPosition(Vector2D.of(butterflyX, butterflyY))
+                        .withCooldown(resultingCooldown));
     }
 }
