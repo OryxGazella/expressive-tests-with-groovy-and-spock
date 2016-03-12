@@ -5,8 +5,13 @@ import org.immutables.value.Value;
 import java.util.List;
 
 @Value.Immutable
-public interface Scene {
-    PhysicalEntity butterfly();
-    List<PhysicalEntity> dragonflies();
-    List<PhysicalEntity> lasers();
+public abstract class Scene {
+    public abstract PhysicalEntity butterfly();
+    public abstract List<PhysicalEntity> dragonflies();
+    public abstract List<PhysicalEntity> lasers();
+
+    @Value.Default
+    public int cooldown() {
+        return 0;
+    }
 }

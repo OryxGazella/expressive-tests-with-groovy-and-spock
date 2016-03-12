@@ -65,14 +65,18 @@ class GameLogicTest extends Specification {
     @Unroll
     def "A butterfly should spawn lasers -> #lasers when the fire command is issued and the cooldown is #cooldown and the resulting cooldown should be #resultingCooldown"() {
         given: "A butterfly with a cooldown of 0"
-        def butterflyWithNoCooldown = initialScene.withButterfly(PhysicalEntity.createButterflyAt(0f, 0f, cooldown))
+        def butterflyWithNoCooldown = initialScene
+                .withButterfly(PhysicalEntity.createButterflyAt(0f, 0f))
+                .withCooldown(cooldown)
 
         when: "A shot command is issued to the scene"
         def resultingScene = GameLogic.applyLogic(butterflyWithNoCooldown, Stub(ButterflyControls) { fire() >> true })
 
         then: "A new laser should spawn and the butterfly's cooldown should be reset"
-        resultingScene == butterflyWithNoCooldown.withButterfly(PhysicalEntity.createButterflyAt(0f, 0f, resultingCooldown))
+        resultingScene == butterflyWithNoCooldown
+                .withButterfly(PhysicalEntity.createButterflyAt(0f, 0f))
                 .withLasers(lasers)
+                .withCooldown(resultingCooldown)
 
         where:
         lasers                                                                                           | cooldown | resultingCooldown
@@ -85,14 +89,18 @@ class GameLogicTest extends Specification {
     @Unroll
     def "A butterfly with a cooldown of #cooldown should have a cooldown of #resultingCooldown when the game logic is applied"() {
         given:
-        def butterflyWithCooldown = initialScene.withButterfly(PhysicalEntity.createButterflyAt(0f, 0f, cooldown))
+        def butterflyWithCooldown = initialScene
+                .withButterfly(PhysicalEntity.createButterflyAt(0f, 0f))
+                .withCooldown(cooldown)
 
         when:
         def resultingScene = GameLogic.applyLogic(butterflyWithCooldown, Stub(ButterflyControls))
 
 
         then:
-        resultingScene == butterflyWithCooldown.withButterfly(PhysicalEntity.createButterflyAt(0f, 0f, resultingCooldown))
+        resultingScene == butterflyWithCooldown
+                .withButterfly(PhysicalEntity.createButterflyAt(0f, 0f))
+                .withCooldown(resultingCooldown)
 
         where:
         cooldown | resultingCooldown
@@ -104,14 +112,18 @@ class GameLogicTest extends Specification {
 
     def "A laser should not fire when a butterfly's cooldown is not 0 and a fire command issued"() {
         given:
-        def butterflyWithNoCooldown = initialScene.withButterfly(PhysicalEntity.createButterflyAt(0f, 0f, 8))
+        def butterflyWithNoCooldown = initialScene
+                .withButterfly(PhysicalEntity.createButterflyAt(0f, 0f))
+                .withCooldown(8)
 
         when:
         def resultingScene = GameLogic.applyLogic(butterflyWithNoCooldown, fire())
 
         then:
-        resultingScene == butterflyWithNoCooldown.withButterfly(PhysicalEntity.createButterflyAt(0f, 0f, 7))
-        resultingScene.lasers() == []
+        resultingScene == butterflyWithNoCooldown
+                .withButterfly(PhysicalEntity.createButterflyAt(0f, 0f))
+                .withCooldown(7)
+                .withLasers([])
     }
 
     ButterflyControls fire() {
