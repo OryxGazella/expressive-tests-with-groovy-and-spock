@@ -3,6 +3,7 @@ package soy.frank.flutterby
 import soy.frank.flutterby.actors.ImmutablePhysicalEntity
 import soy.frank.flutterby.actors.ImmutableVector2D
 import soy.frank.flutterby.actors.Laser
+import soy.frank.flutterby.actors.PhysicalEntity
 
 class PhysicalEntitySpec {
 
@@ -16,6 +17,15 @@ class PhysicalEntitySpec {
     def y(float yPos) {
         positionBuilder.y(yPos)
     }
+
+    static PhysicalEntity aPhysicalEntity(@DelegatesTo(PhysicalEntitySpec) Closure closure) {
+        def physicalEntitySpec = new PhysicalEntitySpec()
+        def code = closure.rehydrate(physicalEntitySpec, this, this)
+        code.run()
+        physicalEntitySpec.build()
+
+    }
+
 
     static ImmutablePhysicalEntity aLaser(@DelegatesTo(PhysicalEntitySpec) Closure closure) {
         def laserSpec = new PhysicalEntitySpec()
