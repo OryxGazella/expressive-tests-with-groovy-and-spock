@@ -4,8 +4,11 @@ import soy.frank.flutterby.actors.*;
 import soy.frank.flutterby.input.ButterflyControls;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.partitioningBy;
+import static java.util.stream.Collectors.toList;
 
 public class GameLogic {
 
@@ -21,11 +24,20 @@ public class GameLogic {
             resultingCooldown = Butterfly.COOLDOWN;
         }
 
-        List<PhysicalEntity> movedLasers = laserStream.collect(Collectors.toList());
 
+        Map<Boolean, List<PhysicalEntity>> remainingLasers = laserStream.collect(partitioningBy(l -> !actors.dragonflies().stream().anyMatch(d -> CollisionDetector.collides(l, d))));
+
+        List<PhysicalEntity> movedLasers = remainingLasers.get(true);
+
+        List<PhysicalEntity> collidingLasers = remainingLasers.get(false);
+
+        Stream<PhysicalEntity> dragonflies = actors.dragonflies().stream();
+
+        dragonflies = dragonflies.filter(df -> collidingLasers.stream().noneMatch(l -> CollisionDetector.collides(df, l)));
         return ImmutableScene.copyOf(actors)
                 .withLasers(movedLasers)
                 .withButterfly(resultingButterfly(movedButterflyCoordinates, actors.butterfly()))
+                .withDragonflies(dragonflies.collect(toList()))
                 .withCooldown(resultingCooldown);
     }
 

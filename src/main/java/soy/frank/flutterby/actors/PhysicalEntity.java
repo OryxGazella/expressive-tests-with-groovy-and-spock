@@ -52,4 +52,12 @@ public abstract class PhysicalEntity {
                 .position(Vector2D.of(x, y))
                 .build();
     }
+
+    public static PhysicalEntity createDragonflyAt(float x, float y) {
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
+                .width(DragonFly.WIDTH)
+                .height(DragonFly.HEIGHT)
+        );
+
+    }
 }

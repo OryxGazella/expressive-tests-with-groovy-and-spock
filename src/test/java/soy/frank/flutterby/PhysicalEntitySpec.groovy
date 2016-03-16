@@ -1,5 +1,6 @@
 package soy.frank.flutterby
 
+import soy.frank.flutterby.actors.DragonFly
 import soy.frank.flutterby.actors.ImmutablePhysicalEntity
 import soy.frank.flutterby.actors.ImmutableVector2D
 import soy.frank.flutterby.actors.Laser
@@ -33,6 +34,20 @@ class PhysicalEntitySpec {
         def code = closure.rehydrate(laserSpec, this, this)
         code.run()
         laserSpec.build()
+    }
+
+    static ImmutablePhysicalEntity aDragonfly(@DelegatesTo(PhysicalEntitySpec) Closure closure) {
+        def dragonflySpec = new PhysicalEntitySpec()
+        dragonflySpec.dragonfly()
+        def code = closure.rehydrate(dragonflySpec, this, this)
+        code.run()
+        dragonflySpec.build()
+    }
+
+    def dragonfly() {
+        builder.height(DragonFly.HEIGHT)
+        builder.width(DragonFly.WIDTH)
+
     }
 
     private void laser() {

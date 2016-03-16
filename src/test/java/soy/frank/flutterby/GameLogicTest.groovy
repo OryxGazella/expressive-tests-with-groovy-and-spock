@@ -5,6 +5,7 @@ import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static soy.frank.flutterby.PhysicalEntitySpec.aDragonfly
 import static soy.frank.flutterby.PhysicalEntitySpec.aLaser
 import static soy.frank.flutterby.SceneSpec.aScene
 
@@ -133,6 +134,61 @@ class GameLogicTest extends Specification {
         -3       | 0
         1        | 0
         0        | 0
+    }
+
+    def "Removes dragonflies and lasers that collide"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lasers aLaser {
+                x 0f
+                y 0f
+            }
+            dragonflies aDragonfly {
+                x 0f
+                y 0f
+            }
+        }
+
+        when:
+        def resultingScene = GameLogic.applyLogic(scene, Stub(ButterflyControls))
+
+        then:
+        resultingScene == aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+        }
+    }
+
+    def "Keeps lasers and dragonflies that don't collide"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            dragonflies aDragonfly {
+                x 0f
+                y 0f
+            }
+            lasers aLaser {
+                x 3 * DragonFly.WIDTH as float
+                y 0f
+                acceleration 0f
+                velocity 0f
+            }
+        }
+
+        when:
+        def resultingScene = GameLogic.applyLogic(scene, Stub(ButterflyControls))
+
+        then:
+        resultingScene == scene
     }
 
     ButterflyControls fire() {

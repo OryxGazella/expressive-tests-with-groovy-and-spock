@@ -36,6 +36,10 @@ class SceneSpec {
         builder.lasers(entities.toList())
     }
 
+    def dragonflies(PhysicalEntity... entities) {
+        builder.dragonflies(entities.toList())
+    }
+
     def lasers(List<PhysicalEntity> lasers) {
         builder.lasers(lasers)
     }
