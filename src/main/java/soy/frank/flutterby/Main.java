@@ -12,6 +12,8 @@ import soy.frank.flutterby.actors.Scene;
 import soy.frank.flutterby.gfx.Renderer;
 import soy.frank.flutterby.input.UserControls;
 
+import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
@@ -24,11 +26,14 @@ public class Main {
 
     public static class Listener implements ApplicationListener {
 
+        private final GameLogic gameLogic;
         private PublishSubject<Float> ticks = PublishSubject.create();
         private Renderer renderer;
         private final Scene initialScene;
 
         public Listener() {
+            Random random = new Random();
+            this.gameLogic = new GameLogic(random::nextInt);
             initialScene = ImmutableScene
                     .builder()
                     .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2))
@@ -42,7 +47,7 @@ public class Main {
 
             ticks
                     .map(unused -> UserControls.pollKeysPressed())
-                    .scan(initialScene, GameLogic::applyLogic)
+                    .scan(initialScene, gameLogic::applyLogic)
                     .subscribe(renderer::render);
         }
 

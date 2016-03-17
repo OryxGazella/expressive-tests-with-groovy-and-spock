@@ -23,6 +23,10 @@ class SceneSpec {
         builder.cooldown(cooldown)
     }
 
+    def dragonflyCooldown(int cooldown) {
+        builder.dragonflyCooldown(cooldown)
+    }
+
     def butterfly(@DelegatesTo(PhysicalEntitySpec) Closure closure) {
         def physicalEntitySpec = new PhysicalEntitySpec()
         def code = closure.rehydrate(physicalEntitySpec, this, this)

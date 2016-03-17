@@ -14,4 +14,9 @@ public abstract class Scene {
     public int cooldown() {
         return 0;
     }
+
+    @Value.Default
+    public int dragonflyCooldown() {
+        return 60;
+    }
 }

@@ -12,7 +12,14 @@ import static java.util.stream.Collectors.toList;
 
 public class GameLogic {
 
-    public static Scene applyLogic(Scene actors, ButterflyControls controls) {
+
+    private final RandomNumberGenerator randomNumberGenerator;
+
+    public GameLogic(RandomNumberGenerator randomNumberGenerator) {
+        this.randomNumberGenerator = randomNumberGenerator;
+
+    }
+    public Scene applyLogic(Scene actors, ButterflyControls controls) {
         Vector2D movedButterflyCoordinates = moveButterfly(actors, controls);
         Stream<PhysicalEntity> laserStream = moveLasers(actors.lasers());
 
@@ -24,6 +31,8 @@ public class GameLogic {
             resultingCooldown = Butterfly.COOLDOWN;
         }
 
+        int resultingDragonflyCooldown = actors.dragonflyCooldown() - 1;
+        if (resultingDragonflyCooldown < 0) resultingDragonflyCooldown = 0;
 
         Map<Boolean, List<PhysicalEntity>> remainingLasers = laserStream.collect(partitioningBy(l -> !actors.dragonflies().stream().anyMatch(d -> CollisionDetector.collides(l, d))));
 
@@ -33,12 +42,18 @@ public class GameLogic {
 
         Stream<PhysicalEntity> dragonflies = actors.dragonflies().stream();
 
+        if(actors.dragonflyCooldown() <= 0) {
+            dragonflies = Stream.concat(dragonflies, Stream.of(PhysicalEntity.createDragonflyAt(0f, 0f)));
+            resultingDragonflyCooldown = randomNumberGenerator.randomInteger() % 180;
+        }
+
         dragonflies = dragonflies.filter(df -> collidingLasers.stream().noneMatch(l -> CollisionDetector.collides(df, l)));
         return ImmutableScene.copyOf(actors)
                 .withLasers(movedLasers)
                 .withButterfly(resultingButterfly(movedButterflyCoordinates, actors.butterfly()))
                 .withDragonflies(dragonflies.collect(toList()))
-                .withCooldown(resultingCooldown);
+                .withCooldown(resultingCooldown)
+                .withDragonflyCooldown(resultingDragonflyCooldown);
     }
 
     private static Stream<PhysicalEntity> appendLaserToLaserStream(Vector2D movedButterflyCoordinates, Stream<PhysicalEntity> laserStream) {
