@@ -2,7 +2,7 @@ package soy.frank.flutterby
 
 import spock.lang.Specification
 
-import static soy.frank.flutterby.PhysicalEntitySpec.aPhysicalEntity
+import static soy.frank.flutterby.DSL.aPhysicalEntity
 
 class CollisionDetectorTest extends Specification {
 

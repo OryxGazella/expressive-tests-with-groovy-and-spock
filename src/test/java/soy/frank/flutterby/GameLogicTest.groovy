@@ -5,9 +5,9 @@ import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static soy.frank.flutterby.PhysicalEntitySpec.aDragonfly
-import static soy.frank.flutterby.PhysicalEntitySpec.aLaser
-import static soy.frank.flutterby.SceneSpec.aScene
+import static soy.frank.flutterby.DSL.aDragonfly
+import static soy.frank.flutterby.DSL.aLaser
+import static soy.frank.flutterby.DSL.aScene
 
 class GameLogicTest extends Specification {
     public static final float VELOCITY = 0.005f

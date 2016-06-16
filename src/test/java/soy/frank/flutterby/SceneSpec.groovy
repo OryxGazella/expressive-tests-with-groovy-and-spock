@@ -5,27 +5,9 @@ import soy.frank.flutterby.actors.ImmutableScene
 import soy.frank.flutterby.actors.PhysicalEntity
 
 class SceneSpec {
+
+    @Delegate
     def ImmutableScene.Builder builder = ImmutableScene.builder()
-
-    static ImmutableScene aScene(@DelegatesTo(SceneSpec) Closure cl) {
-        def scene = new SceneSpec()
-        def code = cl.rehydrate(scene, scene, scene)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
-        code()
-        scene.build()
-    }
-
-    def ImmutableScene build() {
-        builder.build()
-    }
-
-    def cooldown(int cooldown) {
-        builder.cooldown(cooldown)
-    }
-
-    def dragonflyCooldown(int cooldown) {
-        builder.dragonflyCooldown(cooldown)
-    }
 
     def butterfly(@DelegatesTo(PhysicalEntitySpec) Closure closure) {
         def physicalEntitySpec = new PhysicalEntitySpec()
@@ -36,15 +18,13 @@ class SceneSpec {
         builder.butterfly(physicalEntitySpec.build())
     }
 
-    def lasers(PhysicalEntity... entities) {
-        builder.lasers(entities.toList())
+    def dragonflies(PhysicalEntity dragonfly) {
+        builder.dragonflies([dragonfly])
+        this
     }
 
-    def dragonflies(PhysicalEntity... entities) {
-        builder.dragonflies(entities.toList())
-    }
-
-    def lasers(List<PhysicalEntity> lasers) {
-        builder.lasers(lasers)
+    def lasers(PhysicalEntity laser) {
+        builder.lasers([laser])
+        this
     }
 }
