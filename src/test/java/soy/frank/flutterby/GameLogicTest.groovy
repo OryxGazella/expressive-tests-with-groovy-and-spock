@@ -15,7 +15,7 @@ class GameLogicTest extends Specification {
     public static final initialY = 0.0f
 
     @Unroll
-    def "A butterfly moving #direction is displaced by #displacement on the #axis axis"() {
+    def "A butterfly moving #Direction is displaced by #Displacement on the #Axis axis"() {
         expect:
         GameLogic.applyLogic(aScene {
             butterfly {
