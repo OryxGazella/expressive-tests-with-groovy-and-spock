@@ -1,13 +1,13 @@
 package soy.frank.flutterby
 
-import soy.frank.flutterby.actors.*
+import soy.frank.flutterby.actors.Butterfly
+import soy.frank.flutterby.actors.DragonFly
+import soy.frank.flutterby.actors.Laser
 import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static soy.frank.flutterby.DSL.aDragonfly
-import static soy.frank.flutterby.DSL.aLaser
-import static soy.frank.flutterby.DSL.aScene
+import static soy.frank.flutterby.DSL.*
 
 class GameLogicTest extends Specification {
     public static final float VELOCITY = 0.005f
@@ -97,14 +97,9 @@ class GameLogicTest extends Specification {
         def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls) { fire() >> true })
 
         then:
-        resultingScene == aScene {
-            butterfly {
-                x 0f
-                y 0f
-            }
-            lasers Lasers
-            cooldown ResultingCooldown
-            dragonflyCooldown 59
+        with(resultingScene) {
+            lasers() ==  Lasers
+            cooldown() ==  ResultingCooldown
         }
 
         where:
@@ -127,13 +122,8 @@ class GameLogicTest extends Specification {
         }
 
         expect:
-        gameLogic.applyLogic(butterflyWithCooldown, Stub(ButterflyControls)) == aScene {
-            butterfly {
-                x 0f
-                y 0f
-            }
-            cooldown ResultingCooldown
-            dragonflyCooldown 59
+        with(gameLogic.applyLogic(butterflyWithCooldown, Stub(ButterflyControls))) {
+            cooldown() == ResultingCooldown
         }
 
         where:
@@ -165,12 +155,9 @@ class GameLogicTest extends Specification {
         def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
 
         then:
-        resultingScene == aScene {
-            butterfly {
-                x 0f
-                y 0f
-            }
-            dragonflyCooldown 59
+        with(resultingScene) {
+            dragonflies() == []
+            lasers() == []
         }
     }
 
@@ -197,7 +184,18 @@ class GameLogicTest extends Specification {
         def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
 
         then:
-        resultingScene == scene.withDragonflyCooldown(59)
+        with(resultingScene) {
+            lasers() == [aLaser {
+                x 3 * DragonFly.WIDTH as float
+                y 0f
+                acceleration 0f
+                velocity 0f
+            }]
+            dragonflies() == [aDragonfly {
+                x 0f
+                y 0f
+            }]
+        }
     }
 
     def "A dragonfly spawns when the dragonfly cooldown reaches zero and a new random dragonfly cooldown is set"() {
@@ -215,16 +213,12 @@ class GameLogicTest extends Specification {
         def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
 
         then:
-        resultingScene == aScene {
-            butterfly {
+        with(resultingScene) {
+            dragonflyCooldown() == 4
+            dragonflies() == [aDragonfly {
                 x 0f
                 y 0f
-            }
-            dragonflies aDragonfly {
-                x 0f
-                y 0f
-            }
-            dragonflyCooldown 4
+            }]
         }
     }
 
