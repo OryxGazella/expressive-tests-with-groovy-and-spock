@@ -21,7 +21,7 @@ class GameLogicTest extends Specification {
     }
 
     @Unroll
-    def "A butterfly moving #Direction is displaced by #Displacement on the #axis axis"() {
+    def "A butterfly moving #Direction is displaced by #Displacement on the #Axis axis"() {
         expect:
         gameLogic.applyLogic(aScene {
             butterfly {
