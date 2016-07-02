@@ -14,7 +14,7 @@ import soy.frank.flutterby.input.UserControls;
 
 import java.util.Random;
 
-public class Main {
+class Main {
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.width = 1920;
@@ -24,14 +24,14 @@ public class Main {
         new LwjglApplication(new Listener(), config);
     }
 
-    public static class Listener implements ApplicationListener {
+    private static class Listener implements ApplicationListener {
 
         private final GameLogic gameLogic;
-        private PublishSubject<Float> ticks = PublishSubject.create();
+        private final PublishSubject<Float> ticks = PublishSubject.create();
         private Renderer renderer;
         private final Scene initialScene;
 
-        public Listener() {
+        Listener() {
             Random random = new Random();
             this.gameLogic = new GameLogic(random::nextInt);
             initialScene = ImmutableScene

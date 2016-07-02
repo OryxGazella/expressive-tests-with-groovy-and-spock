@@ -15,8 +15,8 @@ import java.util.Map;
 
 public class Renderer implements Disposable {
 
-    public static final float CLOUD_HEIGHT = (float) (2697 / 1920);
-    public static final float VIEWPORT_HEIGHT = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
+    private static final float CLOUD_HEIGHT = (float) (2697 / 1920);
+    private static final float VIEWPORT_HEIGHT = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
     private final SpriteBatch batch;
     private final Sprite clouds;
     private final Sprite laser;

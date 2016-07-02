@@ -1,6 +1,6 @@
 package soy.frank.flutterby;
 
 @FunctionalInterface
-public interface RandomNumberGenerator {
+interface RandomNumberGenerator {
     int randomInteger();
 }

@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
 
-public class GameLogic {
+class GameLogic {
 
 
     private final RandomNumberGenerator randomNumberGenerator;
