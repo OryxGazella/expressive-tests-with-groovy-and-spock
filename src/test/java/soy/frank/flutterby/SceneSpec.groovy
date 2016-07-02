@@ -1,6 +1,7 @@
 package soy.frank.flutterby
 
 import soy.frank.flutterby.actors.Butterfly
+import soy.frank.flutterby.actors.Explosion
 import soy.frank.flutterby.actors.ImmutableScene
 import soy.frank.flutterby.actors.PhysicalEntity
 
@@ -25,6 +26,11 @@ class SceneSpec {
 
     def lasers(PhysicalEntity laser) {
         builder.lasers([laser])
+        this
+    }
+
+    def events(Explosion event) {
+        builder.events([event])
         this
     }
 }

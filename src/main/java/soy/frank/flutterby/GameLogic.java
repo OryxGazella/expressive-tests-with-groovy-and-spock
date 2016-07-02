@@ -5,6 +5,7 @@ import soy.frank.flutterby.input.ButterflyControls;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.partitioningBy;
@@ -53,7 +54,8 @@ class GameLogic {
                 .withButterfly(resultingButterfly(movedButterflyCoordinates, actors.butterfly()))
                 .withDragonflies(dragonflies.collect(toList()))
                 .withCooldown(resultingCooldown)
-                .withDragonflyCooldown(resultingDragonflyCooldown);
+                .withDragonflyCooldown(resultingDragonflyCooldown)
+                .withExplosions(collidingLasers.stream().map(cl -> ImmutableExplosion.builder().position(cl.position()).build()).collect(Collectors.toList()));
     }
 
     private static Stream<PhysicalEntity> appendLaserToLaserStream(Vector2D movedButterflyCoordinates, Stream<PhysicalEntity> laserStream) {

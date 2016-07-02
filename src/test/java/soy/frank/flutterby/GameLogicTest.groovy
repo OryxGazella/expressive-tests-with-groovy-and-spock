@@ -2,7 +2,9 @@ package soy.frank.flutterby
 
 import soy.frank.flutterby.actors.Butterfly
 import soy.frank.flutterby.actors.DragonFly
+import soy.frank.flutterby.actors.ImmutableExplosion
 import soy.frank.flutterby.actors.Laser
+import soy.frank.flutterby.actors.Vector2D
 import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -144,6 +146,8 @@ class GameLogicTest extends Specification {
             lasers aLaser {
                 x 0f
                 y 0f
+                acceleration 0f
+                velocity 0f
             }
             dragonflies aDragonfly {
                 x 0f
@@ -158,6 +162,7 @@ class GameLogicTest extends Specification {
         with(resultingScene) {
             dragonflies() == []
             lasers() == []
+            explosions() == [ImmutableExplosion.builder().position(Vector2D.of(0f, 0f)).build()]
         }
     }
 

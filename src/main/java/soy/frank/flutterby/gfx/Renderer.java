@@ -10,13 +10,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 import soy.frank.flutterby.actors.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Renderer implements Disposable {
 
     private static final float CLOUD_HEIGHT = (float) (2697 / 1920);
     private static final float VIEWPORT_HEIGHT = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
+    private static final float SCROLLING_HEIGHT = -0.001f;
     private final SpriteBatch batch;
     private final Sprite clouds;
     private final Sprite laser;
@@ -24,6 +25,8 @@ public class Renderer implements Disposable {
     private final Map<String, Texture> textures = new HashMap<>();
     private final Sprite dragonfly;
     private final Sprite butterfly;
+
+    private List<ExplosionAnimation> explosionAnimations = Collections.emptyList();
 
     public Renderer() {
 
@@ -38,6 +41,7 @@ public class Renderer implements Disposable {
         dragonfly = createSprite("dragonfly.png", 144, 48, DragonFly.WIDTH, DragonFly.HEIGHT);
 
         clouds.setPosition(-0.500f, bottom);
+
     }
 
     private Sprite createSprite(String imagePath, int imageWidth, int imageHeight, float width, float height) {
@@ -54,13 +58,25 @@ public class Renderer implements Disposable {
 
     public void render(Scene actors) {
         clearScreen();
+        explosionAnimations.addAll(actors.explosions().stream().map(e -> new ExplosionAnimation(e.position())).collect(Collectors.toList()));
 
         batch.begin();
 
         moveBackground();
+
+        drawExplosions(explosionAnimations);
+        moveExplosions(explosionAnimations);
+        explosionAnimations = removeExplosionsThatAreOffTheScreen(explosionAnimations);
+
         drawSprites(actors);
 
         batch.end();
+    }
+
+    private List<ExplosionAnimation> removeExplosionsThatAreOffTheScreen(List<ExplosionAnimation> explosionAnimations) {
+        return explosionAnimations.stream()
+                .filter(e -> e.getY() > -(VIEWPORT_HEIGHT / 2 + 0.3) && !e.getParticleEffect().isComplete())
+                .collect(Collectors.toList());
     }
 
     private void clearScreen() {
@@ -74,10 +90,24 @@ public class Renderer implements Disposable {
         actors.dragonflies().forEach(df -> drawSpriteAtPosition(df.position(), dragonfly));
     }
 
+    private void drawExplosions(Collection<ExplosionAnimation> explosionAnimations) {
+        explosionAnimations.forEach(e -> {
+            e.getParticleEffect().setPosition(e.getX(), e.getY());
+            e.getParticleEffect().draw(batch);
+        });
+    }
+
+    private void moveExplosions(Collection<ExplosionAnimation> explosionAnimations) {
+        explosionAnimations.forEach(e -> {
+            e.setY(e.getY() + SCROLLING_HEIGHT );
+            e.getParticleEffect().update(0.0128f);
+        });
+    }
+
     private void moveBackground() {
-        clouds.translate(0.0f, -0.001f);
+        clouds.translate(0.0f, SCROLLING_HEIGHT);
         clouds.draw(batch);
-        if (clouds.getY() < -(CLOUD_HEIGHT + VIEWPORT_HEIGHT/2)) clouds.setY(VIEWPORT_HEIGHT / 2);
+        if (clouds.getY() < -(CLOUD_HEIGHT + VIEWPORT_HEIGHT / 2)) clouds.setY(VIEWPORT_HEIGHT / 2);
     }
 
     private void drawSpriteAtPosition(Vector2D position, Sprite sprite) {
@@ -85,6 +115,7 @@ public class Renderer implements Disposable {
         sprite.setY(position.y());
         sprite.draw(batch);
     }
+
 
     @Override
     public void dispose() {

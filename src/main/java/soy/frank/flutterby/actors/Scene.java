@@ -9,6 +9,7 @@ public abstract class Scene {
     public abstract PhysicalEntity butterfly();
     public abstract List<PhysicalEntity> dragonflies();
     public abstract List<PhysicalEntity> lasers();
+    public abstract List<Explosion> explosions();
 
     @Value.Default
     public int cooldown() {

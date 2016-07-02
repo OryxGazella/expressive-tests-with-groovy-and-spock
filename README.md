@@ -21,6 +21,7 @@ You will need to do the following one-time setup (preferably before importing th
 ### Images
 
 Images are from [pixabay](https://pixabay.com) and are licensed under CC0 Public Domain.
+Explosions are from [kenney.nl](http://kenney.nl/) and are licensed under CC0 1.0 Universal
 
 Svg images have undergone some editing, the edited versions have been included.
 
@@ -28,3 +29,4 @@ Svg images have undergone some editing, the edited versions have been included.
 * [Dragonfly](https://pixabay.com/en/animal-dragonfly-insect-butterfly-161030/)
 * [Laser](https://pixabay.com/en/eye-laser-human-body-pupil-39997/)
 * [Clouds](https://pixabay.com/en/clouds-blue-white-sky-nature-33139/)
+* [Explosions](http://kenney.nl/assets/smoke-particles)
