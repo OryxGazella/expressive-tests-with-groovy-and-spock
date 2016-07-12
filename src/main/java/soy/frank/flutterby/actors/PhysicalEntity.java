@@ -30,6 +30,9 @@ public abstract class PhysicalEntity {
         return 0.0f;
     }
 
+    @Value.Default
+    public int phase() {return 0;}
+
     public static PhysicalEntity createButterflyAt(float x, float y) {
         return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
                 .width(Butterfly.WIDTH)

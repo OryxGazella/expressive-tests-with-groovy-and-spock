@@ -13,6 +13,8 @@ import static java.util.stream.Collectors.toList;
 
 class GameLogic {
 
+    private static final double TAU = Math.PI * 2;
+    private static final int TICKS_PER_CYCLE = 120;
 
     private final RandomNumberGenerator randomNumberGenerator;
 
@@ -43,6 +45,8 @@ class GameLogic {
 
         Stream<PhysicalEntity> dragonflies = actors.dragonflies().stream();
 
+        dragonflies = moveDragonflies(dragonflies);
+
         if(actors.dragonflyCooldown() <= 0) {
             dragonflies = Stream.concat(dragonflies, Stream.of(PhysicalEntity.createDragonflyAt(0f, 0f)));
             resultingDragonflyCooldown = randomNumberGenerator.randomInteger() % 180;
@@ -56,6 +60,16 @@ class GameLogic {
                 .withCooldown(resultingCooldown)
                 .withDragonflyCooldown(resultingDragonflyCooldown)
                 .withExplosions(collidingLasers.stream().map(cl -> ImmutableExplosion.builder().position(cl.position()).build()).collect(Collectors.toList()));
+    }
+
+    private Stream<PhysicalEntity> moveDragonflies(Stream<PhysicalEntity> dragonflies) {
+        return dragonflies.map(df -> ImmutablePhysicalEntity
+                .copyOf(df)
+                .withPhase((df.phase() + 1 <= TICKS_PER_CYCLE ? df.phase() + 1 : 0) % TICKS_PER_CYCLE)
+                .withPosition(
+                        Vector2D.of(
+                                (float)(Math.sin((TAU / TICKS_PER_CYCLE) * df.phase())) * 0.1f,
+                                df.position().y())));
     }
 
     private static Stream<PhysicalEntity> appendLaserToLaserStream(Vector2D movedButterflyCoordinates, Stream<PhysicalEntity> laserStream) {

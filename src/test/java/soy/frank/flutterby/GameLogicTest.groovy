@@ -1,15 +1,13 @@
 package soy.frank.flutterby
 
-import soy.frank.flutterby.actors.Butterfly
-import soy.frank.flutterby.actors.DragonFly
-import soy.frank.flutterby.actors.ImmutableExplosion
-import soy.frank.flutterby.actors.Laser
-import soy.frank.flutterby.actors.Vector2D
+import soy.frank.flutterby.actors.*
 import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static soy.frank.flutterby.DSL.*
+import static spock.util.matcher.HamcrestMatchers.closeTo
+import static spock.util.matcher.HamcrestSupport.expect
 
 class GameLogicTest extends Specification {
     public static final float VELOCITY = 0.005f
@@ -166,6 +164,33 @@ class GameLogicTest extends Specification {
         }
     }
 
+    @Unroll
+    def "Dragonflies move on the X axis by the sin(τ/120 * #Phase) * 0.1 = #Displacement"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            dragonflies aDragonfly {
+                x 0f
+                y 0f
+                phase Phase
+            }
+        }
+
+        expect:
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls)).dragonflies()[0]) {
+            expect position().x(), closeTo(Displacement as float, 0.00001)
+            phase() == ResultingPhase
+        }
+
+        where:
+        Phase << [0, 1, 2, 3, 60, 61, 62, 63, 120]
+        ResultingPhase << [1, 2, 3, 4, 61, 62, 63, 64, 0]
+        Displacement << [0, 0.00523359562, 0.01045284632, 0.0156434465, 0, -0.00523359562, -0.01045284632, -0.0156434465, 0]
+    }
+
     def "Keeps lasers and dragonflies that don't collide"() {
         given:
         def scene = aScene {
@@ -196,10 +221,7 @@ class GameLogicTest extends Specification {
                 acceleration 0f
                 velocity 0f
             }]
-            dragonflies() == [aDragonfly {
-                x 0f
-                y 0f
-            }]
+            dragonflies().size() == 1
         }
     }
 
