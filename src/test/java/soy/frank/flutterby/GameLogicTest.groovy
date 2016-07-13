@@ -277,8 +277,9 @@ class GameLogicTest extends Specification {
         180          | 120       | (120 / 60).toFloat().round(2)
         184          | 124       | (124 / 60).toFloat().round(2)
     }
+
     @Unroll
-    def "A dragonfly spawns at a random position on the y axis from 0 to the screen height when the random number generator returns #RandomNumber"() {
+    def "A dragonfly spawns at #YPosition on the y axis when the random number generator returns #RandomNumber"() {
         given:
         def gameLogic = new GameLogic({ RandomNumber })
         def scene = aScene {
