@@ -20,4 +20,9 @@ public abstract class Scene {
     public int dragonflyCooldown() {
         return 60;
     }
+
+    @Value.Default
+    public int lives() {
+        return 3;
+    }
 }

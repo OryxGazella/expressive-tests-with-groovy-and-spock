@@ -18,6 +18,8 @@ public class Renderer implements Disposable {
     private static final float CLOUD_HEIGHT = (float) (2697 / 1920);
     private static final float VIEWPORT_HEIGHT = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
     private static final float SCROLLING_HEIGHT = -0.001f;
+    private static final float LIFE_HEIGHT = Butterfly.WIDTH / 2;
+    private static final float LIFE_WIDTH = Butterfly.WIDTH / 2;
     private final SpriteBatch batch;
     private final Sprite clouds;
     private final Sprite laser;
@@ -25,6 +27,7 @@ public class Renderer implements Disposable {
     private final Map<String, Texture> textures = new HashMap<>();
     private final Sprite dragonfly;
     private final Sprite butterfly;
+    private final Sprite life;
 
     private List<ExplosionAnimation> explosionAnimations = Collections.emptyList();
 
@@ -39,6 +42,7 @@ public class Renderer implements Disposable {
         clouds = createSprite("clouds.png", 1920, 2697, 1.0f, CLOUD_HEIGHT);
         laser = createSprite("laser.png", 12, 72, Laser.WIDTH, Laser.HEIGHT);
         dragonfly = createSprite("dragonfly.png", 144, 48, DragonFly.WIDTH, DragonFly.HEIGHT);
+        life = createSprite("butterfly_life.png", 48, 48, LIFE_WIDTH, LIFE_HEIGHT);
 
         clouds.setPosition(-0.500f, bottom);
 
@@ -86,8 +90,19 @@ public class Renderer implements Disposable {
 
     private void drawSprites(Scene actors) {
         drawSpriteAtPosition(actors.butterfly().position(), butterfly);
+        drawLives(actors.lives());
         actors.lasers().forEach(l -> drawSpriteAtPosition(l.position(), laser));
         actors.dragonflies().forEach(df -> drawSpriteAtPosition(df.position(), dragonfly));
+    }
+
+    private void drawLives(int lives) {
+        float margin = 0.01f;
+        float padding = 0.005f;
+        for(int i = 0; i < lives; i++) {
+            drawSpriteAtPosition(
+                    Vector2D.of(0.5f - LIFE_HEIGHT - (LIFE_HEIGHT + padding) * i - margin, VIEWPORT_HEIGHT / 2 - LIFE_HEIGHT - margin),
+                    life);
+        }
     }
 
     private void drawExplosions(Collection<ExplosionAnimation> explosionAnimations) {
