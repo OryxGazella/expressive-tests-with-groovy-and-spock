@@ -164,12 +164,34 @@ class GameLogicTest extends Specification {
         }
     }
 
+    def "A butterfly that collides with a dragonfly causes the dragonfly to explode and the butterfly loses a life"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            dragonflies aDragonfly {
+                x 0f
+                y 0f
+            }
+            lives 5
+        }
+
+        expect:
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
+            dragonflies() == []
+            explosions() == [ImmutableExplosion.builder().position(Vector2D.of(0f, 0f)).build()]
+            lives() == 4
+        }
+    }
+
     @Unroll
     def "Dragonflies move on the X axis by the sin(τ/120 * #Phase) * 0.1 = #Displacement"() {
         given:
         def scene = aScene {
             butterfly {
-                x 0f
+                x 3 * DragonFly.WIDTH + 0.3f as float
                 y 0f
             }
             dragonflies aDragonfly {
@@ -195,7 +217,7 @@ class GameLogicTest extends Specification {
         given:
         def scene = aScene {
             butterfly {
-                x 0f
+                x 3 * DragonFly.WIDTH as float
                 y 0f
             }
             dragonflies aDragonfly {
@@ -230,7 +252,7 @@ class GameLogicTest extends Specification {
         def gameLogic = new GameLogic({ 184 })
         def scene = aScene {
             butterfly {
-                x 0f
+                x 3 * DragonFly.WIDTH as float
                 y 0f
             }
             dragonflyCooldown 0

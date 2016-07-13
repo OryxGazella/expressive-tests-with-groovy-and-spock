@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.partitioningBy;
-import static java.util.stream.Collectors.toList;
 
 class GameLogic {
 
@@ -53,13 +52,23 @@ class GameLogic {
         }
 
         dragonflies = dragonflies.filter(df -> collidingLasers.stream().noneMatch(l -> CollisionDetector.collides(df, l)));
+
+        ImmutablePhysicalEntity resultingButterfly = resultingButterfly(movedButterflyCoordinates, actors.butterfly());
+        Map<Boolean, List<PhysicalEntity>> dragonfliesThatCollideWithButterfly = dragonflies.collect(partitioningBy(df -> !CollisionDetector.collides(df, resultingButterfly)));
+        Stream<ImmutableExplosion> explosions = collidingLasers.stream().map(cl -> ImmutableExplosion.builder().position(cl.position()).build());
+        int resultingLives = actors.lives();
+        if(dragonfliesThatCollideWithButterfly.get(false).size() > 0) {
+            resultingLives -= 1;
+            explosions = Stream.concat(explosions, dragonfliesThatCollideWithButterfly.get(false).stream().map(dr -> ImmutableExplosion.builder().position(dr.position()).build()));
+        }
         return ImmutableScene.copyOf(actors)
                 .withLasers(movedLasers)
-                .withButterfly(resultingButterfly(movedButterflyCoordinates, actors.butterfly()))
-                .withDragonflies(dragonflies.collect(toList()))
+                .withButterfly(resultingButterfly)
+                .withDragonflies(dragonfliesThatCollideWithButterfly.get(true))
                 .withCooldown(resultingCooldown)
                 .withDragonflyCooldown(resultingDragonflyCooldown)
-                .withExplosions(collidingLasers.stream().map(cl -> ImmutableExplosion.builder().position(cl.position()).build()).collect(Collectors.toList()));
+                .withExplosions(explosions.collect(Collectors.toList()))
+                .withLives(resultingLives);
     }
 
     private Stream<PhysicalEntity> moveDragonflies(Stream<PhysicalEntity> dragonflies) {
