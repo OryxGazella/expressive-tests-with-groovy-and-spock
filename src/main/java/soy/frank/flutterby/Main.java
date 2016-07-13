@@ -33,10 +33,10 @@ class Main {
 
         Listener() {
             Random random = new Random();
-            this.gameLogic = new GameLogic(random::nextInt);
+            this.gameLogic = new GameLogic(() -> Math.abs(random.nextInt()));
             initialScene = ImmutableScene
                     .builder()
-                    .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2))
+                    .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2 - 0.25f))
                     .build();
         }
 

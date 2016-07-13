@@ -247,9 +247,11 @@ class GameLogicTest extends Specification {
         }
     }
 
-    def "A dragonfly spawns when the dragonfly cooldown reaches zero and a new random dragonfly cooldown is set"() {
+    @Unroll
+    def """A dragonfly spawns when the dragonfly cooldown reaches 0 and a new random dragonfly cooldown
+            of #Cooldown (#Seconds seconds) is set when the random number generator returns #RandomNumber"""() {
         given:
-        def gameLogic = new GameLogic({ 184 })
+        def gameLogic = new GameLogic({ RandomNumber })
         def scene = aScene {
             butterfly {
                 x 3 * DragonFly.WIDTH as float
@@ -263,12 +265,54 @@ class GameLogicTest extends Specification {
 
         then:
         with(resultingScene) {
-            dragonflyCooldown() == 4
-            dragonflies() == [aDragonfly {
-                x 0f
-                y 0f
-            }]
+            dragonflyCooldown() == Cooldown
+            dragonflies().size() == 1
         }
+
+        where:
+        RandomNumber | Cooldown  | Seconds
+        0            | 120       | 2.0
+        121          | 241       | (241 / 60).toFloat().round(2)
+        179          | 120 + 179 | (299 / 60).toFloat().round(2)
+        180          | 120       | (120 / 60).toFloat().round(2)
+        184          | 124       | (124 / 60).toFloat().round(2)
+    }
+    @Unroll
+    def "A dragonfly spawns at a random position on the y axis from 0 to the screen height when the random number generator returns #RandomNumber"() {
+        given:
+        def gameLogic = new GameLogic({ RandomNumber })
+        def scene = aScene {
+            butterfly {
+                x 3 * DragonFly.WIDTH as float
+                y 0f
+            }
+            dragonflyCooldown 0
+        }
+
+        when:
+        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
+
+        then:
+        with(resultingScene.dragonflies()[0]) {
+            position().y() == YPosition
+        }
+
+        where:
+        RandomNumber | YPosition
+        0            | -2 * DragonFly.HEIGHT as float
+        1            | -1 * DragonFly.HEIGHT as float
+        2            | 0f
+        3            | 1 * DragonFly.HEIGHT as float
+        4            | 2 * DragonFly.HEIGHT as float
+        5            | 3 * DragonFly.HEIGHT as float
+        6            | 4 * DragonFly.HEIGHT as float
+        7            | 5 * DragonFly.HEIGHT as float
+        8            | 6 * DragonFly.HEIGHT as float
+        9            | 7 * DragonFly.HEIGHT as float
+        10           | 8 * DragonFly.HEIGHT as float
+        11           | 9 * DragonFly.HEIGHT as float
+        12           | 10 * DragonFly.HEIGHT as float
+        13           | 11 * DragonFly.HEIGHT as float
     }
 
     ButterflyControls fire() {

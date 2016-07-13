@@ -47,8 +47,8 @@ class GameLogic {
         dragonflies = moveDragonflies(dragonflies);
 
         if(actors.dragonflyCooldown() <= 0) {
-            dragonflies = Stream.concat(dragonflies, Stream.of(PhysicalEntity.createDragonflyAt(0f, 0f)));
-            resultingDragonflyCooldown = randomNumberGenerator.randomInteger() % 180;
+            dragonflies = Stream.concat(dragonflies, Stream.of(PhysicalEntity.createDragonflyAt(0f, (randomNumberGenerator.randomInteger() % 14 - 2) * DragonFly.HEIGHT)));
+            resultingDragonflyCooldown = randomNumberGenerator.randomInteger() % 180 + 120;
         }
 
         dragonflies = dragonflies.filter(df -> collidingLasers.stream().noneMatch(l -> CollisionDetector.collides(df, l)));
