@@ -1,6 +1,9 @@
 package soy.frank.flutterby
 
-import soy.frank.flutterby.actors.*
+import soy.frank.flutterby.actors.Butterfly
+import soy.frank.flutterby.actors.DragonFly
+import soy.frank.flutterby.actors.Laser
+import soy.frank.flutterby.actors.Vector2D
 import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -10,10 +13,7 @@ import static spock.util.matcher.HamcrestMatchers.closeTo
 import static spock.util.matcher.HamcrestSupport.expect
 
 class GameLogicTest extends Specification {
-    public static final float VELOCITY = 0.005f
-    public static final initialX = 0.0f
-    public static final initialY = 0.0f
-
+    public static final float VELOCITY = Butterfly.VELOCITY
     GameLogic gameLogic
 
     def setup() {
@@ -31,11 +31,11 @@ class GameLogicTest extends Specification {
         }, move(Direction)).butterfly.position."$Axis" == Displacement
 
         where:
-        Direction | Displacement                    | Axis
-        "up"      | (initialY + VELOCITY).toFloat() | "y"
-        "right"   | (initialX + VELOCITY).toFloat() | "x"
-        "down"    | (initialY - VELOCITY).toFloat() | "y"
-        "left"    | (initialX - VELOCITY).toFloat() | "x"
+        Direction | Displacement | Axis
+        "up"      | VELOCITY     | "y"
+        "right"   | VELOCITY     | "x"
+        "down"    | -VELOCITY    | "y"
+        "left"    | -VELOCITY    | "x"
     }
 
     private ButterflyControls move(String direction) {
