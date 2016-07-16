@@ -92,12 +92,10 @@ class GameLogicTest extends Specification {
             }
             cooldown Cooldown
         }
+        def butterflyFiring = Stub(ButterflyControls) { fire() >> true }
 
-        when:
-        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls) { fire() >> true })
-
-        then:
-        with(resultingScene) {
+        expect:
+        with(gameLogic.applyLogic(scene, butterflyFiring)) {
             lasers() ==  Lasers
             cooldown() ==  ResultingCooldown
         }
@@ -153,11 +151,8 @@ class GameLogicTest extends Specification {
             }
         }
 
-        when:
-        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
-
-        then:
-        with(resultingScene) {
+        expect:
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
             dragonflies() == []
             lasers() == []
             explosions() == [anExplosion {
@@ -236,11 +231,8 @@ class GameLogicTest extends Specification {
             }
         }
 
-        when:
-        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
-
-        then:
-        with(resultingScene) {
+        expect:
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
             lasers() == [aLaser {
                 x 3 * DragonFly.WIDTH as float
                 y 0f
@@ -264,11 +256,8 @@ class GameLogicTest extends Specification {
             dragonflyCooldown 0
         }
 
-        when:
-        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
-
-        then:
-        with(resultingScene) {
+        expect:
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
             dragonflyCooldown() == Cooldown
             dragonflies().size() == 1
         }
