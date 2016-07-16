@@ -160,7 +160,9 @@ class GameLogicTest extends Specification {
         with(resultingScene) {
             dragonflies() == []
             lasers() == []
-            explosions() == [ImmutableExplosion.builder().position(Vector2D.of(0f, 0f)).build()]
+            explosions() == [anExplosion {
+                position Vector2D.of(0f, 0f)
+            }]
         }
     }
 
@@ -181,7 +183,9 @@ class GameLogicTest extends Specification {
         expect:
         with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
             dragonflies() == []
-            explosions() == [ImmutableExplosion.builder().position(Vector2D.of(0f, 0f)).build()]
+            explosions() == [anExplosion {
+                position Vector2D.of(0f, 0f)
+            }]
             lives() == 4
         }
     }

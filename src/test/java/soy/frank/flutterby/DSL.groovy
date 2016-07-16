@@ -1,5 +1,6 @@
 package soy.frank.flutterby
 
+import soy.frank.flutterby.actors.ImmutableExplosion
 import soy.frank.flutterby.actors.ImmutablePhysicalEntity
 import soy.frank.flutterby.actors.ImmutableScene
 import soy.frank.flutterby.actors.PhysicalEntity
@@ -34,5 +35,12 @@ class DSL {
         def code = closure.rehydrate(dragonflySpec, this, this)
         code.run()
         dragonflySpec.build()
+    }
+
+    static ImmutableExplosion anExplosion(@DelegatesTo(ImmutableExplosion.Builder) Closure closure) {
+        def builder = ImmutableExplosion.builder()
+        closure.delegate = builder
+        closure.run()
+        builder.build()
     }
 }
