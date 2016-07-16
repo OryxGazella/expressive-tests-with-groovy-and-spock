@@ -4,8 +4,8 @@ import org.immutables.value.Value;
 
 @Value.Immutable(intern = true)
 public interface Vector2D {
-    float x();
-    float y();
+    float getX();
+    float getY();
 
     static float centeredAt(float width, float centeredAtWidth, float centeredWithWidth) {
         return centeredAtWidth + width / 2 - centeredWithWidth / 2;

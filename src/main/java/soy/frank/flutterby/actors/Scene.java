@@ -6,10 +6,10 @@ import java.util.List;
 
 @Value.Immutable
 public abstract class Scene {
-    public abstract PhysicalEntity butterfly();
-    public abstract List<PhysicalEntity> dragonflies();
-    public abstract List<PhysicalEntity> lasers();
-    public abstract List<Explosion> explosions();
+    public abstract PhysicalEntity getButterfly();
+    public abstract List<PhysicalEntity> getDragonflies();
+    public abstract List<PhysicalEntity> getLasers();
+    public abstract List<Explosion> getExplosions();
 
     @Value.Default
     public int cooldown() {

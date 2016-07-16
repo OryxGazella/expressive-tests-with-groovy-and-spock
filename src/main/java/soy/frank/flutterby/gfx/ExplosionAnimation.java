@@ -16,7 +16,7 @@ class ExplosionAnimation {
     }
 
     ExplosionAnimation(Vector2D position) {
-        this(position.x(), position.y());
+        this(position.getX(), position.getY());
     }
 
     public float getY() {

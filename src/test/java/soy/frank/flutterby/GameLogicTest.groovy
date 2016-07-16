@@ -28,7 +28,7 @@ class GameLogicTest extends Specification {
                 x 0.0f
                 y 0.0f
             }
-        }, move(Direction)).butterfly().position()."$Axis"() == Displacement
+        }, move(Direction)).butterfly.position."$Axis" == Displacement
 
         where:
         Direction | Displacement                    | Axis
@@ -66,7 +66,7 @@ class GameLogicTest extends Specification {
         def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
 
         then:
-        resultingScene.lasers() == [
+        resultingScene.lasers == [
                 aLaser {
                     velocity NewVelocity
                     x X
@@ -96,7 +96,7 @@ class GameLogicTest extends Specification {
 
         expect:
         with(gameLogic.applyLogic(scene, butterflyFiring)) {
-            lasers() ==  Lasers
+            lasers ==  Lasers
             cooldown() ==  ResultingCooldown
         }
 
@@ -153,9 +153,9 @@ class GameLogicTest extends Specification {
 
         expect:
         with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
-            dragonflies() == []
-            lasers() == []
-            explosions() == [anExplosion {
+            dragonflies.empty
+            lasers.empty
+            explosions == [anExplosion {
                 position Vector2D.of(0f, 0f)
             }]
         }
@@ -177,8 +177,8 @@ class GameLogicTest extends Specification {
 
         expect:
         with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
-            dragonflies() == []
-            explosions() == [anExplosion {
+            dragonflies.empty
+            explosions == [anExplosion {
                 position Vector2D.of(0f, 0f)
             }]
             lives() == 4
@@ -201,9 +201,9 @@ class GameLogicTest extends Specification {
         }
 
         expect:
-        with(gameLogic.applyLogic(scene, Stub(ButterflyControls)).dragonflies()[0]) {
-            expect position().x(), closeTo(Displacement as float, 0.00001)
-            phase() == ResultingPhase
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls)).dragonflies[0]) {
+            expect position.x, closeTo(Displacement as float, 0.00001)
+            phase == ResultingPhase
         }
 
         where:
@@ -233,13 +233,13 @@ class GameLogicTest extends Specification {
 
         expect:
         with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
-            lasers() == [aLaser {
+            lasers == [aLaser {
                 x 3 * DragonFly.WIDTH as float
                 y 0f
                 acceleration 0f
                 velocity 0f
             }]
-            dragonflies().size() == 1
+            dragonflies.size() == 1
         }
     }
 
@@ -259,7 +259,7 @@ class GameLogicTest extends Specification {
         expect:
         with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
             dragonflyCooldown() == Cooldown
-            dragonflies().size() == 1
+            dragonflies.size() == 1
         }
 
         where:
@@ -287,8 +287,8 @@ class GameLogicTest extends Specification {
         def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
 
         then:
-        with(resultingScene.dragonflies()[0]) {
-            position().y() == YPosition
+        with(resultingScene.dragonflies[0]) {
+            position.y == YPosition
         }
 
         where:

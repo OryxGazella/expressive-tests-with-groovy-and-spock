@@ -62,7 +62,7 @@ public class Renderer implements Disposable {
 
     public void render(Scene actors) {
         clearScreen();
-        explosionAnimations.addAll(actors.explosions().stream().map(e -> new ExplosionAnimation(e.position())).collect(Collectors.toList()));
+        explosionAnimations.addAll(actors.getExplosions().stream().map(e -> new ExplosionAnimation(e.getPosition())).collect(Collectors.toList()));
 
         batch.begin();
 
@@ -89,10 +89,10 @@ public class Renderer implements Disposable {
     }
 
     private void drawSprites(Scene actors) {
-        drawSpriteAtPosition(actors.butterfly().position(), butterfly);
+        drawSpriteAtPosition(actors.getButterfly().getPosition(), butterfly);
         drawLives(actors.lives());
-        actors.lasers().forEach(l -> drawSpriteAtPosition(l.position(), laser));
-        actors.dragonflies().forEach(df -> drawSpriteAtPosition(df.position(), dragonfly));
+        actors.getLasers().forEach(l -> drawSpriteAtPosition(l.getPosition(), laser));
+        actors.getDragonflies().forEach(df -> drawSpriteAtPosition(df.getPosition(), dragonfly));
     }
 
     private void drawLives(int lives) {
@@ -126,8 +126,8 @@ public class Renderer implements Disposable {
     }
 
     private void drawSpriteAtPosition(Vector2D position, Sprite sprite) {
-        sprite.setX(position.x());
-        sprite.setY(position.y());
+        sprite.setX(position.getX());
+        sprite.setY(position.getY());
         sprite.draw(batch);
     }
 

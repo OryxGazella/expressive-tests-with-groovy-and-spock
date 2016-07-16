@@ -6,32 +6,32 @@ import org.immutables.value.Value;
 public abstract class PhysicalEntity {
 
     @Value.Default
-    public Vector2D position() {
+    public Vector2D getPosition() {
         return Vector2D.of(0.0f, 0.0f);
     }
 
     @Value.Default
-    public float width() {
+    public float getWidth() {
         return 0.0f;
     }
 
     @Value.Default
-    public float height() {
+    public float getHeight() {
         return 0.0f;
     }
 
     @Value.Default
-    public float velocity() {
+    public float getVelocity() {
         return 0.0f;
     }
 
     @Value.Default
-    public float acceleration() {
+    public float getAcceleration() {
         return 0.0f;
     }
 
     @Value.Default
-    public int phase() {return 0;}
+    public int getPhase() {return 0;}
 
     public static PhysicalEntity createButterflyAt(float x, float y) {
         return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
