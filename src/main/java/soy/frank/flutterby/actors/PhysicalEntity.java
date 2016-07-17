@@ -57,10 +57,13 @@ public abstract class PhysicalEntity {
     }
 
     public static PhysicalEntity createDragonflyAt(float x, float y) {
+        return createDragonflyWithPhase(x, y, 0);
+    }
+
+    static PhysicalEntity createDragonflyWithPhase(float x, float y, int phase) {
         return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
                 .width(DragonFly.WIDTH)
                 .height(DragonFly.HEIGHT)
-        );
-
+                .phase(phase));
     }
 }

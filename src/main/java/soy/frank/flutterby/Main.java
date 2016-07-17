@@ -5,16 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.subjects.PublishSubject;
-import soy.frank.flutterby.actors.Butterfly;
-import soy.frank.flutterby.actors.ImmutableScene;
-import soy.frank.flutterby.actors.PhysicalEntity;
-import soy.frank.flutterby.actors.Scene;
+import soy.frank.flutterby.actors.*;
 import soy.frank.flutterby.gfx.Renderer;
 import soy.frank.flutterby.input.UserControls;
 
 import java.util.Random;
 
 class Main {
+
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.width = 1920;
@@ -37,6 +35,7 @@ class Main {
             initialScene = ImmutableScene
                     .builder()
                     .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2 - 0.25f))
+                    .dragonflies(DragonFly.DOUBlE_HELIX)
                     .build();
         }
 
