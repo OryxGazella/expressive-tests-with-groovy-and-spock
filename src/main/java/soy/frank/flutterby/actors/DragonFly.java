@@ -6,6 +6,8 @@ import java.util.List;
 public class DragonFly {
     public static final float WIDTH = 0.075f;
     public static final float HEIGHT = 0.025f;
+    public static final float LASER_VELOCITY = -Laser.VELOCITY;
+    public static final float LASER_ACCELERATION = -Laser.ACCELERATION;
     public static final List<PhysicalEntity> DOUBlE_HELIX = Arrays.asList(
             PhysicalEntity.createDragonflyAt(0f, 0f),
             PhysicalEntity.createDragonflyWithPhase(0f, 0f, 60),

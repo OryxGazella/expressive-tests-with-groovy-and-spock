@@ -33,6 +33,11 @@ public abstract class PhysicalEntity {
     @Value.Default
     public int getPhase() {return 0;}
 
+    @Value.Default
+    public int getShotCooldown() {
+        return 120;
+    }
+
     public static PhysicalEntity createButterflyAt(float x, float y) {
         return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
                 .width(Butterfly.WIDTH)
@@ -50,15 +55,33 @@ public abstract class PhysicalEntity {
         );
     }
 
+    public static PhysicalEntity createDragonflyLaserAt(float x, float y) {
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity
+                .builder()
+                .width(Laser.WIDTH)
+                .height(Laser.HEIGHT)
+                .velocity(-Laser.VELOCITY)
+                .acceleration(-Laser.ACCELERATION)
+        );
+    }
+
     private static PhysicalEntity createPhysicalEntityAt(float x, float y, ImmutablePhysicalEntity.Builder builder) {
         return builder
                 .position(Vector2D.of(x, y))
                 .build();
     }
 
-    public static PhysicalEntity createDragonflyAt(float x, float y) {
+    static PhysicalEntity createDragonflyAt(float x, float y) {
         return createDragonflyWithPhase(x, y, 0);
     }
+
+    public static PhysicalEntity createDragonflyWithShotCooldown(float x, float y, int shotCooldown) {
+        return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()
+                .width(DragonFly.WIDTH)
+                .height(DragonFly.HEIGHT)
+                .shotCooldown(shotCooldown));
+    }
+
 
     static PhysicalEntity createDragonflyWithPhase(float x, float y, int phase) {
         return createPhysicalEntityAt(x, y, ImmutablePhysicalEntity.builder()

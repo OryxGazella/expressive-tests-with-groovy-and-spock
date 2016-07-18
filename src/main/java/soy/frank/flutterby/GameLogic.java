@@ -26,6 +26,7 @@ class GameLogic {
         this.randomNumberGenerator = randomNumberGenerator;
 
     }
+
     public Scene applyLogic(Scene actors, ButterflyControls controls) {
 
         if(actors.getLives() < 0) {
@@ -64,12 +65,23 @@ class GameLogic {
 
         List<PhysicalEntity> collidingLasers = remainingLasers.get(false);
 
+        Stream<PhysicalEntity> dragonflyLaserStream = moveLasers(actors.getDragonflyLasers());
+        dragonflyLaserStream = Stream.concat(
+                dragonflyLaserStream,
+                actors.getDragonflies().stream()
+                        .filter(df -> df.getShotCooldown() <= 0)
+                        .map(df -> PhysicalEntity.createDragonflyLaserAt(df.getPosition().getX(), df.getPosition().getY())));
+
+
         Stream<PhysicalEntity> dragonflies = actors.getDragonflies().stream();
 
         dragonflies = moveDragonflies(dragonflies);
+        dragonflies = decreaseCooldown(dragonflies);
 
         if(actors.dragonflyCooldown() <= 0) {
-            dragonflies = Stream.concat(dragonflies, Stream.of(PhysicalEntity.createDragonflyAt(0f, (randomNumberGenerator.randomInteger() % 14 - 2) * DragonFly.HEIGHT)));
+            dragonflies = Stream.concat(dragonflies, Stream.of(PhysicalEntity.createDragonflyWithShotCooldown(0f,
+                    (randomNumberGenerator.randomInteger() % 14 - 2) * DragonFly.HEIGHT,
+                    randomNumberGenerator.randomInteger() % 180 + 120)));
             resultingDragonflyCooldown = randomNumberGenerator.randomInteger() % 180 + 120;
         }
 
@@ -83,7 +95,6 @@ class GameLogic {
             resultingLives -= 1;
             explosions = Stream.concat(explosions, dragonfliesThatCollideWithButterfly.get(true).stream().map(dr -> ImmutableExplosion.builder().position(dr.getPosition()).build()));
         }
-        Stream<PhysicalEntity> dragonflyLaserStream = moveLasers(actors.getDragonflyLasers());
         Map<Boolean, List<PhysicalEntity>> dragonflyLasersThatCollideWithButterfly = dragonflyLaserStream
                 .collect(Collectors.partitioningBy(l -> CollisionDetector.collides(resultingButterfly, l)));
         if(dragonflyLasersThatCollideWithButterfly.get(true).size() > 0) {
@@ -103,6 +114,12 @@ class GameLogic {
                 .withExplosions(allExplosions)
                 .withLives(resultingLives)
                 .withScore(actors.getScore() + dragonfliesKilled * 50);
+    }
+
+    private Stream<PhysicalEntity> decreaseCooldown(Stream<PhysicalEntity> dragonflies) {
+        return dragonflies.map(df -> ImmutablePhysicalEntity.builder().from(df)
+                .shotCooldown(df.getShotCooldown() <= 0 ? randomNumberGenerator.randomInteger() % 120 + 120: df.getShotCooldown() -1)
+                .build());
     }
 
     private Stream<PhysicalEntity> moveDragonflies(Stream<PhysicalEntity> dragonflies) {

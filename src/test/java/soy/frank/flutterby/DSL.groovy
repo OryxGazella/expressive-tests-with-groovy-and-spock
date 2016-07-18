@@ -1,5 +1,6 @@
 package soy.frank.flutterby
 
+import soy.frank.flutterby.actors.DragonFly
 import soy.frank.flutterby.actors.ImmutableExplosion
 import soy.frank.flutterby.actors.ImmutablePhysicalEntity
 import soy.frank.flutterby.actors.ImmutableScene
@@ -26,6 +27,16 @@ class DSL {
         laserSpec.laser()
         def code = closure.rehydrate(laserSpec, this, this)
         code.run()
+        laserSpec.build()
+    }
+
+    static ImmutablePhysicalEntity aDragonflyLaser(@DelegatesTo(PhysicalEntitySpec) Closure closure) {
+        def laserSpec = new PhysicalEntitySpec()
+        laserSpec.laser()
+        def code = closure.rehydrate(laserSpec, this, this)
+        code.run()
+        laserSpec.velocity(DragonFly.LASER_VELOCITY)
+        laserSpec.acceleration(DragonFly.LASER_ACCELERATION)
         laserSpec.build()
     }
 

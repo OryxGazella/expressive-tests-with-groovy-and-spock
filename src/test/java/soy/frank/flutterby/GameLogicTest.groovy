@@ -143,6 +143,41 @@ class GameLogicTest extends Specification {
         0        | 0
     }
 
+    @Unroll("""A dragonfly with a shot cooldown of #ShotCooldown will have a shot cooldown of #ResultingShotCooldown
+                after the game logic is applied. It will spawn dragonfly lasers: #DragonflyLasers""")
+    def "Dragonflies' shot cooldown decreases with each tick"() {
+        given:
+        def gameLogic = new GameLogic({ 4 })
+        def butterflyWithCooldown = aScene {
+            butterfly {
+                x 3 * DragonFly.WIDTH as float
+                y 0f
+            }
+            dragonflies aDragonfly {
+                x 0f
+                y 0f
+                shotCooldown ShotCooldown
+            }
+        }
+
+        when:
+        def resultingScene = gameLogic.applyLogic(butterflyWithCooldown, Stub(ButterflyControls))
+
+        then:
+        with(resultingScene.dragonflies[0]) {
+            shotCooldown == ResultingShotCooldown
+        }
+
+        resultingScene.dragonflyLasers == DragonflyLasers
+
+        where:
+        ShotCooldown | ResultingShotCooldown | NumberOfDragonflyLasers | DragonflyLasers
+        8            | 7                     | 0                       | []
+        -3           | 124                   | 1                       | [aDragonflyLaser {x 0f; y 0f;}]
+        1            | 0                     | 0                       | []
+        0            | 124                   | 1                       | [aDragonflyLaser {x 0f; y 0f;}]
+    }
+
     def "Removes dragonflies and lasers that collide, and increments the score by 50 points"() {
         given:
         def scene = aScene {
@@ -436,6 +471,10 @@ class GameLogicTest extends Specification {
         with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
             dragonflyCooldown() == Cooldown
             dragonflies.size() == 1
+        }
+
+        with(gameLogic.applyLogic(scene, Stub(ButterflyControls)).dragonflies[0]) {
+            shotCooldown == Cooldown
         }
 
         where:
