@@ -83,7 +83,8 @@ class GameLogic {
             resultingLives -= 1;
             explosions = Stream.concat(explosions, dragonfliesThatCollideWithButterfly.get(true).stream().map(dr -> ImmutableExplosion.builder().position(dr.getPosition()).build()));
         }
-        Map<Boolean, List<PhysicalEntity>> dragonflyLasersThatCollideWithButterfly = actors.getDragonflyLasers().stream()
+        Stream<PhysicalEntity> dragonflyLaserStream = moveLasers(actors.getDragonflyLasers());
+        Map<Boolean, List<PhysicalEntity>> dragonflyLasersThatCollideWithButterfly = dragonflyLaserStream
                 .collect(Collectors.partitioningBy(l -> CollisionDetector.collides(resultingButterfly, l)));
         if(dragonflyLasersThatCollideWithButterfly.get(true).size() > 0) {
             resultingLives -= 1;

@@ -29,6 +29,11 @@ class SceneSpec {
         this
     }
 
+    def dragonflyLasers(PhysicalEntity laser) {
+        builder.dragonflyLasers([laser])
+        this
+    }
+
     def paused(Boolean paused) {
         builder.isPaused(paused)
     }

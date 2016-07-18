@@ -57,10 +57,11 @@ class GameLogicTest extends Specification {
 
         def scene = aScene {
             butterfly {
-                x 0.0f
+                x 3 * Butterfly.WIDTH as float
                 y 0.0f
             }
             lasers laserWithAcceleration
+            dragonflyLasers laserWithAcceleration
         }
 
         when:
@@ -68,6 +69,15 @@ class GameLogicTest extends Specification {
 
         then:
         resultingScene.lasers == [
+                aLaser {
+                    velocity NewVelocity
+                    x X
+                    y NewY
+                    acceleration Acceleration
+                }
+        ]
+
+        resultingScene.dragonflyLasers == [
                 aLaser {
                     velocity NewVelocity
                     x X
@@ -391,6 +401,8 @@ class GameLogicTest extends Specification {
             dragonflyLasers([aLaser {
                 x 0f
                 y 0f
+                acceleration 0f
+                velocity 0f
             }])
             lives 3
         }
