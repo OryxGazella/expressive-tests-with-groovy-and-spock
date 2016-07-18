@@ -10,4 +10,9 @@ public interface ButterflyControls {
     boolean moveLeft();
     boolean fire();
     boolean restart();
+    boolean quit();
+
+    default boolean anyMovement() {
+        return moveDown() || moveUp() || moveLeft() || moveRight();
+    }
 }

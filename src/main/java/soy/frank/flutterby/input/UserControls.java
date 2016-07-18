@@ -14,6 +14,7 @@ public class UserControls {
                 .moveLeft(pressed(Keys.A, Keys.LEFT))
                 .fire(pressed(Keys.SPACE))
                 .restart(pressed(Keys.R))
+                .quit(pressed(Keys.ESCAPE))
                 .build();
     }
 

@@ -89,6 +89,9 @@ public class Renderer implements Disposable {
         if(gameOver) {
             drawGameOver();
         }
+        if(actors.isPaused()) {
+            drawPaused();
+        }
         batch.end();
     }
 
@@ -97,7 +100,18 @@ public class Renderer implements Disposable {
         font.getData().setScale(2.0f);
         font.draw(batch,
                 "Game Over\n" +
-                "Press 'R' to Restart",
+                        "Press 'R' to Restart\n" +
+                        "Press <Esc> to quit",
+                Gdx.graphics.getWidth() / 2.5f, Gdx.graphics.getHeight() / 2);
+    }
+
+    private void drawPaused() {
+        font.setColor(Color.FIREBRICK);
+        font.getData().setScale(2.0f);
+        font.draw(batch,
+                "Paused\n" +
+                        "Press 'Fire' to Quit\n" +
+                        "Press any movement key to continue",
                 Gdx.graphics.getWidth() / 2.5f, Gdx.graphics.getHeight() / 2);
     }
 

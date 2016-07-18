@@ -30,4 +30,14 @@ public abstract class Scene {
     public int getScore() {
         return 0;
     }
+
+    @Value.Default
+    public boolean isRunning() {
+        return true;
+    }
+
+    @Value.Default
+    public boolean isPaused() {
+        return false;
+    }
 }

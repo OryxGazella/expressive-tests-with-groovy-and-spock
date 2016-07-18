@@ -29,6 +29,10 @@ class SceneSpec {
         this
     }
 
+    def paused(Boolean paused) {
+        builder.isPaused(paused)
+    }
+
     def events(Explosion event) {
         builder.events([event])
         this

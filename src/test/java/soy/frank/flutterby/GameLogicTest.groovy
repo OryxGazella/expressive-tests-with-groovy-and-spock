@@ -5,6 +5,7 @@ import soy.frank.flutterby.actors.DragonFly
 import soy.frank.flutterby.actors.Laser
 import soy.frank.flutterby.actors.Vector2D
 import soy.frank.flutterby.input.ButterflyControls
+import soy.frank.flutterby.input.ImmutableButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -163,7 +164,7 @@ class GameLogicTest extends Specification {
         }
     }
 
-    def "The game stops when the butterfly is on less than 0 lives"() {
+    def "The game stops updating when the butterfly is on less than 0 lives"() {
         given:
         def scene = aScene {
             butterfly {
@@ -196,6 +197,106 @@ class GameLogicTest extends Specification {
 
         then:
         resultingScene == GameLogic.INITIAL_SCENE
+    }
+
+    def "The game is no longer running when the butterfly is on less than 0 lives and the quit control is sent"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lives(-1)
+        }
+
+        when:
+        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls) { quit() >> true })
+
+        then:
+        !resultingScene.running
+    }
+
+    def "The game is no longer running when the game is paused and the fire control is sent"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lives 10
+            paused true
+        }
+
+        def pauseControl = Stub(ButterflyControls) {fire() >> true}
+
+        expect:
+        with(gameLogic.applyLogic(scene, pauseControl)) {
+            !running
+        }
+    }
+
+    def "The game becomes paused when the quit command is sent on a running game"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lives 10
+        }
+
+        def pauseControl = Stub(ButterflyControls) {quit() >> true}
+
+        expect:
+        with(gameLogic.applyLogic(scene, pauseControl)) {
+            running
+            paused
+        }
+    }
+
+    @SuppressWarnings("GroovyAssignabilityCheck")
+    def "A paused game un-pauses with any directional movement"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lives 3
+            paused true
+        }
+        when:
+        def resultingScene = gameLogic.applyLogic(scene, controls(Directions))
+
+        then:
+        resultingScene.paused == Paused
+
+        where:
+        Paused  | Directions
+        true    | []
+        false   | ["up"]
+        false   | ["up", "right"]
+        false   | ["right"]
+        false   | ["right", "down"]
+        false   | ["down"]
+        false   | ["left", "down"]
+        false   | ["left"]
+        false   | ["left", "up"]
+    }
+
+    def controls(List<String> directions) {
+        def controlsBuilder = ImmutableButterflyControls.builder()
+        controlsBuilder.fire(false)
+        controlsBuilder.moveRight(false)
+        controlsBuilder.moveLeft(false)
+        controlsBuilder.quit(false)
+        controlsBuilder.moveUp(false)
+        controlsBuilder.moveDown(false)
+        controlsBuilder.restart(false)
+        directions.each {
+            controlsBuilder."move${it.capitalize()}"(true)
+        }
+        controlsBuilder.build()
     }
 
     def "A butterfly that collides with a dragonfly causes the dragonfly to explode and the butterfly loses a life"() {

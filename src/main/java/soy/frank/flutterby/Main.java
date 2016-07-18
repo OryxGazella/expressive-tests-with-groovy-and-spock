@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.subjects.PublishSubject;
+import soy.frank.flutterby.actors.Scene;
 import soy.frank.flutterby.gfx.Renderer;
 import soy.frank.flutterby.input.UserControls;
 
@@ -40,7 +41,10 @@ class Main {
             ticks
                     .map(unused -> UserControls.pollKeysPressed())
                     .scan(GameLogic.INITIAL_SCENE, gameLogic::applyLogic)
-                    .subscribe(renderer::render);
+                    .takeWhile(Scene::isRunning)
+                    .subscribe(renderer::render,
+                            (e) -> System.out.println("An error has occurred: " + e.getMessage()),
+                            () -> Gdx.app.exit());
         }
 
         @Override

@@ -30,7 +30,18 @@ class GameLogic {
 
         if(actors.lives() < 0) {
             if(controls.restart()) return INITIAL_SCENE;
+            if(controls.quit()) return ImmutableScene.copyOf(actors).withIsRunning(false);
             return actors;
+        }
+
+        if(actors.isPaused()) {
+            if(controls.fire()) return ImmutableScene.copyOf(actors).withIsRunning(false);
+            if(controls.anyMovement()) return ImmutableScene.copyOf(actors).withIsPaused(false);
+            return actors;
+        }
+
+        if(controls.quit()) {
+            return ImmutableScene.copyOf(actors).withIsPaused(true);
         }
 
         Vector2D movedButterflyCoordinates = moveButterfly(actors, controls);
