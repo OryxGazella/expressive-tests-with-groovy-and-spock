@@ -22,6 +22,9 @@ class GameLogic {
 
     }
     public Scene applyLogic(Scene actors, ButterflyControls controls) {
+
+        if(actors.lives() < 0) return actors;
+
         Vector2D movedButterflyCoordinates = moveButterfly(actors, controls);
         Stream<PhysicalEntity> laserStream = moveLasers(actors.getLasers());
 

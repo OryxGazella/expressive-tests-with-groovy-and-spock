@@ -71,6 +71,7 @@ public class Renderer implements Disposable {
     public void render(Scene actors) {
         clearScreen();
         explosionAnimations.addAll(actors.getExplosions().stream().map(e -> new ExplosionAnimation(e.getPosition())).collect(Collectors.toList()));
+        boolean gameOver = actors.lives() < 0;
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -87,10 +88,20 @@ public class Renderer implements Disposable {
         batch.setProjectionMatrix(simpleProjectionMatrix);
         batch.begin();
         drawScore(actors.getScore());
+        if(gameOver) {
+            drawGameOver();
+        }
         batch.end();
     }
 
+    private void drawGameOver() {
+        font.setColor(Color.FIREBRICK);
+        font.getData().setScale(2.0f);
+        font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+    }
+
     private void drawScore(int score) {
+        font.getData().setScale(1.0f);
         int width = Gdx.graphics.getWidth();
         float padding = 0.005f * width;
         float margin = 0.01f * width;

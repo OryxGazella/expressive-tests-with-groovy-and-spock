@@ -163,6 +163,24 @@ class GameLogicTest extends Specification {
         }
     }
 
+    def "The game stops when the butterfly is on less than 0 lives"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lives(-1)
+        }
+        def firingControl = Stub(ButterflyControls) { moveRight() >> true; fire() >> true }
+
+        when:
+        def resultingScene = gameLogic.applyLogic(scene, firingControl)
+
+        then:
+        resultingScene == scene
+    }
+
     def "A butterfly that collides with a dragonfly causes the dragonfly to explode and the butterfly loses a life"() {
         given:
         def scene = aScene {
