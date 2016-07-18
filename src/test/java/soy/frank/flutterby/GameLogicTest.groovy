@@ -319,7 +319,7 @@ class GameLogicTest extends Specification {
             explosions == [anExplosion {
                 position Vector2D.of(0f, 0f)
             }]
-            lives() == 4
+            lives == 4
         }
     }
 
@@ -379,6 +379,32 @@ class GameLogicTest extends Specification {
             }]
             dragonflies.size() == 1
         }
+    }
+
+    def "A dragonfly's laser that collides with a butterfly causes the butterfly to lose a life"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            dragonflyLasers([aLaser {
+                x 0f
+                y 0f
+            }])
+            lives 3
+        }
+
+        when:
+        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls))
+
+        then:
+        resultingScene.dragonflyLasers == []
+        resultingScene.lives == 2
+        resultingScene.explosions == [anExplosion {
+            position Vector2D.of(0f, 0f)
+        }]
+
     }
 
     @Unroll

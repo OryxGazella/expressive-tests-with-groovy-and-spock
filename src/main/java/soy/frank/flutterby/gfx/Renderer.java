@@ -69,7 +69,7 @@ public class Renderer implements Disposable {
     public void render(Scene actors) {
         clearScreen();
         explosionAnimations.addAll(actors.getExplosions().stream().map(e -> new ExplosionAnimation(e.getPosition())).collect(Collectors.toList()));
-        boolean gameOver = actors.lives() < 0;
+        boolean gameOver = actors.getLives() < 0;
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -140,8 +140,9 @@ public class Renderer implements Disposable {
 
     private void drawSprites(Scene actors) {
         drawSpriteAtPosition(actors.getButterfly().getPosition(), butterfly);
-        drawLives(actors.lives());
+        drawLives(actors.getLives());
         actors.getLasers().forEach(l -> drawSpriteAtPosition(l.getPosition(), laser));
+        actors.getDragonflyLasers().forEach(l -> drawSpriteAtPosition(l.getPosition(), laser));
         actors.getDragonflies().forEach(df -> drawSpriteAtPosition(df.getPosition(), dragonfly));
     }
 

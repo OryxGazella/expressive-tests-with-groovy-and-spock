@@ -10,6 +10,7 @@ public abstract class Scene {
     public abstract List<PhysicalEntity> getDragonflies();
     public abstract List<PhysicalEntity> getLasers();
     public abstract List<Explosion> getExplosions();
+    public abstract List<PhysicalEntity> getDragonflyLasers();
 
     @Value.Default
     public int cooldown() {
@@ -22,7 +23,7 @@ public abstract class Scene {
     }
 
     @Value.Default
-    public int lives() {
+    public int getLives() {
         return 3;
     }
 

@@ -28,7 +28,7 @@ class GameLogic {
     }
     public Scene applyLogic(Scene actors, ButterflyControls controls) {
 
-        if(actors.lives() < 0) {
+        if(actors.getLives() < 0) {
             if(controls.restart()) return INITIAL_SCENE;
             if(controls.quit()) return ImmutableScene.copyOf(actors).withIsRunning(false);
             return actors;
@@ -76,21 +76,29 @@ class GameLogic {
         dragonflies = dragonflies.filter(df -> collidingLasers.stream().noneMatch(l -> CollisionDetector.collides(df, l)));
 
         ImmutablePhysicalEntity resultingButterfly = resultingButterfly(movedButterflyCoordinates, actors.getButterfly());
-        Map<Boolean, List<PhysicalEntity>> dragonfliesThatCollideWithButterfly = dragonflies.collect(partitioningBy(df -> !CollisionDetector.collides(df, resultingButterfly)));
+        Map<Boolean, List<PhysicalEntity>> dragonfliesThatCollideWithButterfly = dragonflies.collect(partitioningBy(df -> CollisionDetector.collides(df, resultingButterfly)));
         Stream<ImmutableExplosion> explosions = collidingLasers.stream().map(cl -> ImmutableExplosion.builder().position(cl.getPosition()).build());
-        int resultingLives = actors.lives();
-        if(dragonfliesThatCollideWithButterfly.get(false).size() > 0) {
+        int resultingLives = actors.getLives();
+        if(dragonfliesThatCollideWithButterfly.get(true).size() > 0) {
             resultingLives -= 1;
-            explosions = Stream.concat(explosions, dragonfliesThatCollideWithButterfly.get(false).stream().map(dr -> ImmutableExplosion.builder().position(dr.getPosition()).build()));
+            explosions = Stream.concat(explosions, dragonfliesThatCollideWithButterfly.get(true).stream().map(dr -> ImmutableExplosion.builder().position(dr.getPosition()).build()));
+        }
+        Map<Boolean, List<PhysicalEntity>> dragonflyLasersThatCollideWithButterfly = actors.getDragonflyLasers().stream()
+                .collect(Collectors.partitioningBy(l -> CollisionDetector.collides(resultingButterfly, l)));
+        if(dragonflyLasersThatCollideWithButterfly.get(true).size() > 0) {
+            resultingLives -= 1;
+            explosions = Stream.concat(explosions, dragonflyLasersThatCollideWithButterfly.get(true).stream().map(dl -> ImmutableExplosion.builder().position(dl.getPosition()).build()));
         }
         List<ImmutableExplosion> allExplosions = explosions.collect(Collectors.toList());
-        int dragonfliesKilled = allExplosions.size() - dragonfliesThatCollideWithButterfly.get(false).size();
+        int dragonfliesKilled = allExplosions.size() - dragonfliesThatCollideWithButterfly.get(true).size() - dragonflyLasersThatCollideWithButterfly.get(true).size();
+
         return ImmutableScene.copyOf(actors)
                 .withLasers(movedLasers)
                 .withButterfly(resultingButterfly)
-                .withDragonflies(dragonfliesThatCollideWithButterfly.get(true))
+                .withDragonflies(dragonfliesThatCollideWithButterfly.get(false))
                 .withCooldown(resultingCooldown)
                 .withDragonflyCooldown(resultingDragonflyCooldown)
+                .withDragonflyLasers(dragonflyLasersThatCollideWithButterfly.get(false))
                 .withExplosions(allExplosions)
                 .withLives(resultingLives)
                 .withScore(actors.getScore() + dragonfliesKilled * 50);
