@@ -113,9 +113,9 @@ class GameLogicTest extends Specification {
 
         where:
         Lasers                                                                            | Cooldown | ResultingCooldown
-        [aLaser { x Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float; y Butterfly.HEIGHT }] | 0        | 8
+        [aLaser { x Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float; y Butterfly.HEIGHT }] | 0        | Butterfly.COOLDOWN
         []                                                                                | 8        | 7
-        [aLaser { x Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float; y Butterfly.HEIGHT }] | -3       | 8
+        [aLaser { x Butterfly.WIDTH / 2 - Laser.WIDTH / 2 as float; y Butterfly.HEIGHT }] | -3       | Butterfly.COOLDOWN
         []                                                                                | 1        | 0
     }
 
