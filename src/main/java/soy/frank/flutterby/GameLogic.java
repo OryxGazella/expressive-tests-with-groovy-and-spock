@@ -61,14 +61,17 @@ class GameLogic {
             resultingLives -= 1;
             explosions = Stream.concat(explosions, dragonfliesThatCollideWithButterfly.get(false).stream().map(dr -> ImmutableExplosion.builder().position(dr.getPosition()).build()));
         }
+        List<ImmutableExplosion> allExplosions = explosions.collect(Collectors.toList());
+        int dragonfliesKilled = allExplosions.size() - dragonfliesThatCollideWithButterfly.get(false).size();
         return ImmutableScene.copyOf(actors)
                 .withLasers(movedLasers)
                 .withButterfly(resultingButterfly)
                 .withDragonflies(dragonfliesThatCollideWithButterfly.get(true))
                 .withCooldown(resultingCooldown)
                 .withDragonflyCooldown(resultingDragonflyCooldown)
-                .withExplosions(explosions.collect(Collectors.toList()))
-                .withLives(resultingLives);
+                .withExplosions(allExplosions)
+                .withLives(resultingLives)
+                .withScore(actors.getScore() + dragonfliesKilled * 50);
     }
 
     private Stream<PhysicalEntity> moveDragonflies(Stream<PhysicalEntity> dragonflies) {

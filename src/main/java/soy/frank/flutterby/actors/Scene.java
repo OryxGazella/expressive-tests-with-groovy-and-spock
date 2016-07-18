@@ -25,4 +25,9 @@ public abstract class Scene {
     public int lives() {
         return 3;
     }
+
+    @Value.Default
+    public int getScore() {
+        return 0;
+    }
 }

@@ -1,12 +1,15 @@
 package soy.frank.flutterby.gfx;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Disposable;
 import soy.frank.flutterby.actors.*;
 
@@ -23,6 +26,8 @@ public class Renderer implements Disposable {
     private final SpriteBatch batch;
     private final Sprite clouds;
     private final Sprite laser;
+    private final BitmapFont font;
+    private final Matrix4 simpleProjectionMatrix = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
 
     private final Map<String, Texture> textures = new HashMap<>();
     private final Sprite dragonfly;
@@ -30,14 +35,13 @@ public class Renderer implements Disposable {
     private final Sprite life;
 
     private List<ExplosionAnimation> explosionAnimations = Collections.emptyList();
+    private final OrthographicCamera camera;
 
     public Renderer() {
 
         float bottom = -VIEWPORT_HEIGHT / 2;
-        OrthographicCamera camera = new OrthographicCamera(1f, VIEWPORT_HEIGHT);
+        camera = new OrthographicCamera( 1f, VIEWPORT_HEIGHT);
         batch = new SpriteBatch();
-        batch.setProjectionMatrix(camera.combined);
-
         butterfly = createSprite("butterfly.png", 96, 96, Butterfly.WIDTH, Butterfly.HEIGHT);
         clouds = createSprite("clouds.png", 1920, 2697, 1.0f, CLOUD_HEIGHT);
         laser = createSprite("laser.png", 12, 72, Laser.WIDTH, Laser.HEIGHT);
@@ -45,7 +49,9 @@ public class Renderer implements Disposable {
         life = createSprite("butterfly_life.png", 48, 48, LIFE_WIDTH, LIFE_HEIGHT);
 
         clouds.setPosition(-0.500f, bottom);
-
+        font = new BitmapFont();
+        font.setColor(Color.BLACK);
+        font.getData().setScale(1.5f);
     }
 
     private Sprite createSprite(String imagePath, int imageWidth, int imageHeight, float width, float height) {
@@ -64,6 +70,7 @@ public class Renderer implements Disposable {
         clearScreen();
         explosionAnimations.addAll(actors.getExplosions().stream().map(e -> new ExplosionAnimation(e.getPosition())).collect(Collectors.toList()));
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         moveBackground();
@@ -73,8 +80,21 @@ public class Renderer implements Disposable {
         explosionAnimations = removeExplosionsThatAreOffTheScreen(explosionAnimations);
 
         drawSprites(actors);
-
         batch.end();
+
+        batch.setProjectionMatrix(simpleProjectionMatrix);
+        batch.begin();
+        drawScore(actors.getScore());
+        batch.end();
+    }
+
+    private void drawScore(int score) {
+        int width = Gdx.graphics.getWidth();
+        float padding = 0.005f * width;
+        float margin = 0.01f * width;
+        font.draw(batch, "Score: " + score,
+                width - 3 * LIFE_WIDTH * width - 2 * padding - margin,
+                Gdx.graphics.getHeight() - (LIFE_HEIGHT * width) - (padding) - font.getLineHeight() - margin / 2);
     }
 
     private List<ExplosionAnimation> removeExplosionsThatAreOffTheScreen(List<ExplosionAnimation> explosionAnimations) {
@@ -135,5 +155,6 @@ public class Renderer implements Disposable {
     @Override
     public void dispose() {
         textures.values().forEach(Texture::dispose);
+        font.dispose();
     }
 }

@@ -132,11 +132,11 @@ class GameLogicTest extends Specification {
         0        | 0
     }
 
-    def "Removes dragonflies and lasers that collide"() {
+    def "Removes dragonflies and lasers that collide, and increments the score by 50 points"() {
         given:
         def scene = aScene {
             butterfly {
-                x 0f
+                x 3 * DragonFly.WIDTH + 0.3f as float
                 y 0f
             }
             lasers aLaser {
@@ -149,6 +149,7 @@ class GameLogicTest extends Specification {
                 x 0f
                 y 0f
             }
+            score 50
         }
 
         expect:
@@ -158,6 +159,7 @@ class GameLogicTest extends Specification {
             explosions == [anExplosion {
                 position Vector2D.of(0f, 0f)
             }]
+            score == 100
         }
     }
 
