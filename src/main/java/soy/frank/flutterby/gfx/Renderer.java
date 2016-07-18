@@ -52,6 +52,8 @@ public class Renderer implements Disposable {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(1.5f);
+        Gdx.input.setCursorCatched(true);
+        Gdx.input.setCursorPosition(Gdx.graphics.getHeight(), Gdx.graphics.getWidth());
     }
 
     private Sprite createSprite(String imagePath, int imageWidth, int imageHeight, float width, float height) {
