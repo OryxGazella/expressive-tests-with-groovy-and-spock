@@ -13,6 +13,7 @@ public class UserControls {
                 .moveDown(pressed(Keys.S, Keys.DOWN))
                 .moveLeft(pressed(Keys.A, Keys.LEFT))
                 .fire(pressed(Keys.SPACE))
+                .restart(pressed(Keys.R))
                 .build();
     }
 

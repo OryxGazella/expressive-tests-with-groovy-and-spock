@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import rx.subjects.PublishSubject;
-import soy.frank.flutterby.actors.*;
 import soy.frank.flutterby.gfx.Renderer;
 import soy.frank.flutterby.input.UserControls;
 
@@ -27,16 +26,10 @@ class Main {
         private final GameLogic gameLogic;
         private final PublishSubject<Float> ticks = PublishSubject.create();
         private Renderer renderer;
-        private final Scene initialScene;
 
         Listener() {
             Random random = new Random();
             this.gameLogic = new GameLogic(() -> Math.abs(random.nextInt()));
-            initialScene = ImmutableScene
-                    .builder()
-                    .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2 - 0.25f))
-                    .dragonflies(DragonFly.DOUBlE_HELIX)
-                    .build();
         }
 
 
@@ -46,7 +39,7 @@ class Main {
 
             ticks
                     .map(unused -> UserControls.pollKeysPressed())
-                    .scan(initialScene, gameLogic::applyLogic)
+                    .scan(GameLogic.INITIAL_SCENE, gameLogic::applyLogic)
                     .subscribe(renderer::render);
         }
 

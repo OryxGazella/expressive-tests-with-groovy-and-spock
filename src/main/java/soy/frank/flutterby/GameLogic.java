@@ -14,6 +14,11 @@ class GameLogic {
 
     private static final double TAU = Math.PI * 2;
     private static final int TICKS_PER_CYCLE = 120;
+    static final Scene INITIAL_SCENE = ImmutableScene
+            .builder()
+            .butterfly(PhysicalEntity.createButterflyAt(-Butterfly.WIDTH / 2, -Butterfly.HEIGHT / 2 - 0.25f))
+            .dragonflies(DragonFly.DOUBlE_HELIX)
+            .build();
 
     private final RandomNumberGenerator randomNumberGenerator;
 
@@ -23,7 +28,10 @@ class GameLogic {
     }
     public Scene applyLogic(Scene actors, ButterflyControls controls) {
 
-        if(actors.lives() < 0) return actors;
+        if(actors.lives() < 0) {
+            if(controls.restart()) return INITIAL_SCENE;
+            return actors;
+        }
 
         Vector2D movedButterflyCoordinates = moveButterfly(actors, controls);
         Stream<PhysicalEntity> laserStream = moveLasers(actors.getLasers());

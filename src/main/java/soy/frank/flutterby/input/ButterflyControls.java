@@ -9,4 +9,5 @@ public interface ButterflyControls {
     boolean moveDown();
     boolean moveLeft();
     boolean fire();
+    boolean restart();
 }

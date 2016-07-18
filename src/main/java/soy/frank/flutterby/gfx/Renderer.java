@@ -50,8 +50,6 @@ public class Renderer implements Disposable {
 
         clouds.setPosition(-0.500f, bottom);
         font = new BitmapFont();
-        font.setColor(Color.BLACK);
-        font.getData().setScale(1.5f);
         Gdx.input.setCursorCatched(true);
         Gdx.input.setCursorPosition(Gdx.graphics.getHeight(), Gdx.graphics.getWidth());
     }
@@ -97,10 +95,15 @@ public class Renderer implements Disposable {
     private void drawGameOver() {
         font.setColor(Color.FIREBRICK);
         font.getData().setScale(2.0f);
-        font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        font.draw(batch,
+                "Game Over\n" +
+                "Press 'R' to Restart",
+                Gdx.graphics.getWidth() / 2.5f, Gdx.graphics.getHeight() / 2);
     }
 
     private void drawScore(int score) {
+        font.setColor(Color.BLACK);
+        font.getData().setScale(1.5f);
         font.getData().setScale(1.0f);
         int width = Gdx.graphics.getWidth();
         float padding = 0.005f * width;

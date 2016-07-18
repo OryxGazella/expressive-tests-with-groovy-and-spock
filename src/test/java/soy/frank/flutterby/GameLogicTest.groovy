@@ -181,6 +181,23 @@ class GameLogicTest extends Specification {
         resultingScene == scene
     }
 
+    def "The game restarts when the butterfly is on less than 0 lives and the restart control is sent"() {
+        given:
+        def scene = aScene {
+            butterfly {
+                x 0f
+                y 0f
+            }
+            lives(-1)
+        }
+
+        when:
+        def resultingScene = gameLogic.applyLogic(scene, Stub(ButterflyControls) { restart() >> true })
+
+        then:
+        resultingScene == GameLogic.INITIAL_SCENE
+    }
+
     def "A butterfly that collides with a dragonfly causes the dragonfly to explode and the butterfly loses a life"() {
         given:
         def scene = aScene {
