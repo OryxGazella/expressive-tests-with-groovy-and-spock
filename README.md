@@ -6,7 +6,7 @@
 In IntelliJ, do at least one Maven Compile from the IDE to get the generated code to be
 marked as generated source root.
 
-### Eclipse/STS
+### Eclipse
 You will need to do the following one-time setup (preferably before importing the project):
 
 1. Install the latest snapshot of the groovy support from this
@@ -16,6 +16,9 @@ You will need to do the following one-time setup (preferably before importing th
 [here](https://immutables.github.io/apt.html#eclipse)
 3. Ignore the problem with GMavenPlus, there is no eclipse connector for it.
 4. Right click on your project and mark it as a Groovy project `Configure -> Convert to Groovy Project`.
+5. If you get problems with mismatched groovy versions like 
+`groovy-all is loaded in version 2.4.3 and you are trying to load version 2.4.7`, remove the groovy libraries from the
+build path (right click on groovy libraries -> build path -> remove from build path).
 
 ## References
 
