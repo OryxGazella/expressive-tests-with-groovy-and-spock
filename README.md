@@ -10,7 +10,8 @@ marked as generated source root.
 You will need to do the following one-time setup (preferably before importing the project):
 
 1. Install the latest snapshot of the groovy support from this
-[update site](http://dist.springsource.org/snapshot/GRECLIPSE/e4.5/) select everything.
+[update site](http://dist.springsource.org/snapshot/GRECLIPSE/e4.5/) for Mars or the 
+[update site](http://dist.springsource.org/snapshot/GRECLIPSE/e4.6/) for Neon. Select everything.
 2. Install `m2e-apt` from the marketplace and configure it (once and for all) with the instructions
 [here](https://immutables.github.io/apt.html#eclipse)
 3. Ignore the problem with GMavenPlus, there is no eclipse connector for it.
