@@ -34,3 +34,16 @@ Svg images have undergone some editing, the edited versions have been included.
 * [Laser](https://pixabay.com/en/eye-laser-human-body-pupil-39997/)
 * [Clouds](https://pixabay.com/en/clouds-blue-white-sky-nature-33139/)
 * [Explosions](http://kenney.nl/assets/smoke-particles)
+
+### Slides
+
+Slides based on revealjs [Asciidoctor Gradle Examples](https://github.com/asciidoctor/asciidoctor-gradle-examples)
+
+Butterfly lifecycle image from [thinglink](https://www.thinglink.com/scene/661971317213364226)
+
+You can build the slides with
+
+```
+$ cd slides
+$ ./gradlew asciidoctor
+```

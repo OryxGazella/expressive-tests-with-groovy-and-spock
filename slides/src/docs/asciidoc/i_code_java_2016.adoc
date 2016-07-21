@@ -1,0 +1,349 @@
+= Butterflies with Freakin' Laser Beams
+Frank Smith <oryx.gazella@gmail.com>
+2016-07-22
+:deckjs_transition: fade
+:navigation:
+:goto:
+ifndef::imagesdir[:imagesdir: images]
+
+== Become the Butterfly that Java Deserves
+
+image::lifecycle.jpg[scaledwidth=75%]
+
+Source : https://www.thinglink.com/scene/661971317213364226
+
+== Tip 1: Compile it in Groovy
+
+image::egg.jpg[scaledwidth=75%,float="left"]
+image::refactoringBook.jpg[scalewidth=75%]
+
+
+== Add groovy to test compilation, rename and compile
+[source,java]
+----
+private RentalStatement statement;
+private Movie newRelease1;
+private Movie newRelease2;
+private Movie childrens;
+private Movie regular1;
+private Movie regular2;
+private Movie regular3;
+
+public VideoStoreTest(String name) {
+    super(name);
+}
+
+protected void setUp() {
+    statement = new RentalStatement("Customer Name");
+    newRelease1 = new NewReleaseMovie("New Release 1");
+    newRelease2 = new NewReleaseMovie("New Release 2");
+    childrens = new ChildrensMovie("Childrens");
+    regular1 = new RegularMovie("Regular 1");
+    regular2 = new RegularMovie("Regular 2");
+    regular3 = new RegularMovie("Regular 3");
+}
+
+...
+
+public void testRentalStatementFormat() {
+    statement.addRental(new Rental(regular1, 1));
+    statement.addRental(new Rental(regular2, 2));
+    statement.addRental(new Rental(regular3, 3));
+
+    assertEquals(
+            "Rental Record for Customer Name\n\tRegular 1\t2.0\n\tRegular 2\t2.0\n\tRegular 3\t3.5\nYou owed 7.5\nYou earned 3 frequent renter points\n",
+            statement.makeRentalStatement());
+}
+----
+
+Gotchas:
+
+- Lambdas to Closures `() -> ...` becomes `{}`
+- Array literals `{"A", "B", "C"}` becomes `['A', 'B', 'C'] as String[]`
+
+== Critiques
+
+[source,groovy]
+----
+public void testRentalStatementFormat() {
+    statement.addRental(new Rental(regular1, 1)); // <1>
+    statement.addRental(new Rental(regular2, 2)); // <2>
+    statement.addRental(new Rental(regular3, 3));
+
+    assertEquals(
+            "Rental Record for Customer Name\n\tRegular 1\t2.0\n\tRegular 2\t2.0\n\tRegular 3\t3.5\nYou owed 7.5\nYou earned 3 frequent renter points\n",
+            statement.makeRentalStatement()); // <3>
+}
+----
+<1> It's not immediately clear whether this statement already has other items in it
+<2> What is that number being passed into the Rental constructor?
+<3> One of the most important parts of this test is not readable [Defactored for dramatic effect]
+
+== Kill the cruft
+
+[source,groovy]
+----
+void testRentalStatementFormat() {
+    statement.addRental(new Rental(regular1, 1))
+    statement.addRental(new Rental(regular2, 2))
+    statement.addRental(new Rental(regular3, 3))
+
+    assertEquals(
+            "Rental Record for Customer Name\n\tRegular 1\t2.0\n\tRegular 2\t2.0\n\tRegular 3\t3.5\nYou owed 7.5\nYou earned 3 frequent renter points\n",
+            statement.makeRentalStatement())
+}
+----
+
+== Heredocs
+[source,groovy]
+----
+void testRentalStatementFormat() {
+    statement.addRental(new Rental(regular1, 1))
+    statement.addRental(new Rental(regular2, 2))
+    statement.addRental(new Rental(regular3, 3))
+
+    assertEquals(
+            """\
+            Rental Record for Customer Name
+            \tRegular 1\t2.0
+            \tRegular 2\t2.0
+            \tRegular 3\t3.5
+            You owed 7.5
+            You earned 3 frequent renter points
+            """.stripIndent(),
+            statement.makeRentalStatement())
+}
+----
+
+== Power assert
+[source,groovy]
+----
+void testRentalStatementFormat() {
+    statement.addRental(new Rental(regular1, 1))
+    statement.addRental(new Rental(regular2, 2))
+    statement.addRental(new Rental(regular3, 3))
+
+    assert statement.makeRentalStatement() ==
+            """\
+            Rental Record for Customer Name
+            \tRegular 1\t2.0
+            \tRegular 2\t2.0
+            \tRegular 3\t3.5
+            You owed 7.5
+            You earned 3 frequent renter points
+            """.stripIndent()
+}
+----
+
+== Tip II: Spock-lite
+
+image::caterpillar.jpg[scaledwidth=75%,float="left"]
+image::spock.gif[scaledwidth=75%]
+
+== Plumbing
+[source,groovy]
+----
+class VideoStoreTest extends TestCase {
+// ...
+}
+----
+
+[source,groovy]
+----
+class VideoStoreTest extends Specification {
+// ...
+}
+----
+
+[source,groovy]
+----
+protected void setUp() {
+// ...
+}
+----
+
+[source,groovy]
+----
+def setup() {
+// ...
+}
+----
+
+== And the test...
+
+[source,groovy]
+----
+void testSingleNewReleaseStatement() {
+    statement.addRental(new Rental(newRelease1, 3))
+    statement.makeRentalStatement()
+    assert statement.amountOwed == 9.0 as double
+    assert statement.frequentRenterPoints == 2 as int
+}
+----
+
+[source,groovy]
+----
+def 'New releases cost £3 / day and earn 2 frequent renter points'() { // <1>
+    expect: // <2>
+    statement.addRental(new Rental(newRelease1, 3))
+    statement.makeRentalStatement()
+    statement.amountOwed == 9.0 as double // <3>
+    statement.frequentRenterPoints == 2 as int // <3>
+}
+----
+
+<1> void -> def and STRINGS AS METHOD NAMES!
+<2> Label, minimum thing necessary for a test to be picked up as a spock test
+<3> No need for an explicit assert statement
+
+== Tip III: Idiomatic spock
+image::chrysalis.jpg[scaledwidth=75%]
+
+[source,groovy]
+----
+def 'New releases cost £3 / day and earn 2 frequent renter points'() {
+    given:
+    statement.addRental(new Rental(newRelease1, 3))
+
+    when:
+    statement.makeRentalStatement()
+
+    then:
+    statement.amountOwed == 9.0 as double
+    statement.frequentRenterPoints == 2 as int
+}
+----
+
+== Tip IV: Specification by example
+image::emerging.jpg[scaledwidth=100%]
+
+[source,groovy]
+----
+@Unroll("The roman numeral #romanNumeral is equivalent to #decimalNumber")
+def "Basic roman numerals"() {
+    expect:
+    RomanConverter.Convert(romanNumeral) == decimalNumber
+
+    where:
+    romanNumeral | decimalNumber
+    "I"          | 1
+    "V"          | 5
+    "X"          | 10
+    "L"          | 50
+    "C"          | 100
+    "D"          | 500
+    "M"          | 1000
+}
+----
+
+== Let's compare
+
+image::ping_pong.jpeg[scaledwidth=100%]
+
+== Nah
+
+image::avicii.jpg[scaledwidth=100%]
+
+== Tip V: Make your own language
+image::butterfly.jpg[scaledwidth=100%]
+
+== Choose your own adventure
+image::choose.jpg[scaledwidth=100%]
+
+== Option 1 - BetaMax Edition
+
+[source,groovy]
+----
+def 'Rental statements show the cost of every movie rental, the total owed and the frequent renter points'() {
+    given:
+    def statement = aStatement {
+        customerName "Valyssa Imes"
+        rentals {
+            regularMovie {
+                title "Centy Awful Season 1"
+                days 1
+            }
+            regularMovie {
+                title "Centy Awful Season 2"
+                days 2
+            }
+            regularMovie {
+                title "Centy Awful Season 3"
+                days 3
+            }
+        }
+    }
+
+    expect:
+    statement.makeRentalStatement() ==
+            '''\
+            Rental Record for Valyssa Imes
+            \tCenty Awful Season 1\t2.0
+            \tCenty Awful Season 2\t2.0
+            \tCenty Awful Season 3\t3.5
+            You owed 7.5
+            You earned 3 frequent renter points
+            '''.stripIndent()
+}
+----
+
+== Option 2 - Butterfly Edition
+
+[source,groovy]
+----
+def "Removes dragonflies and lasers that collide"() {
+    given:
+    def scene = aScene {
+        butterfly {
+            x 3f
+            y 3f
+        }
+        lasers aLaser {
+            x 0f
+            y 0f
+            acceleration 0f
+            velocity 0f
+        }
+        dragonflies aDragonfly {
+            x 0f
+            y 0f
+        }
+    }
+
+    expect:
+    with(gameLogic.applyLogic(scene, Stub(ButterflyControls))) {
+        dragonflies.empty
+        lasers.empty
+        explosions == [anExplosion {
+            position Vector2D.of(0f, 0f)
+        }]
+    }
+}
+----
+
+== Let's go
+image::live.jpg[scaledwidth=75%]
+
+== More complex example
+
+[source,groovy]
+----
+def "Throws an UnauthorizedUserException when any userId matrix parameter is already supplied in the request URI"() {
+    given:
+    def containerRequestContext = aContainerRequestContext(
+            {
+                 header "Authorization", "sessionId"
+            },
+            {
+                matrixParam "userId", "someId"
+                matrixParam "userId", "anotherId"
+            })
+
+    when:
+    filter.filter(containerRequestContext)
+
+    then:
+    0 * resolutionService.resolveUserIdFromSessionId("sessionId") >> "resolvedId"
+    thrown UnauthorizedUserException
+}
+----
