@@ -1,11 +1,6 @@
 package soy.frank.flutterby
 
-import soy.frank.flutterby.actors.Butterfly
-import soy.frank.flutterby.actors.ImmutablePhysicalEntity
-import soy.frank.flutterby.actors.ImmutableScene
-import soy.frank.flutterby.actors.Laser
-import soy.frank.flutterby.actors.PhysicalEntity
-import soy.frank.flutterby.actors.Vector2D
+import soy.frank.flutterby.actors.*
 import soy.frank.flutterby.input.ButterflyControls
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -16,12 +11,19 @@ class GameLogicTest extends Specification {
     public static final initialX = 0.0f
     public static final initialY = 0.0f
     def
-    static initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
+    static final initialScene = ImmutableScene.builder().butterfly(PhysicalEntity.createButterflyAt(initialX, initialY)).build() as ImmutableScene
 
     @Unroll
     def "Butterfly moving #direction is displaced by #displacement on the #axis axis"() {
         expect:
-        GameLogic.applyLogic(initialScene, move(direction)).butterfly().position()."$axis"() == displacement
+        def scene = aScene {
+            butterfly {
+                x 0
+                y 0
+            }
+        }
+
+        GameLogic.applyLogic(scene, move(direction)).butterfly().position()."$axis"() == displacement
 
         where:
         direction | displacement                    | axis
@@ -29,6 +31,13 @@ class GameLogicTest extends Specification {
         "right"   | (initialX + velocity).toFloat() | "x"
         "down"    | (initialY - velocity).toFloat() | "y"
         "left"    | (initialX - velocity).toFloat() | "x"
+    }
+
+    Scene aScene(@DelegatesTo(SceneBuilder) Closure closure) {
+        def builder = new SceneBuilder()
+        closure.delegate = builder
+        closure()
+        builder.build()
     }
 
     private ButterflyControls move(String direction) {
