@@ -26,6 +26,7 @@ public class Renderer implements Disposable {
     private final SpriteBatch batch;
     private final Sprite clouds;
     private final Sprite laser;
+    private final Sprite dragonflyLaser;
     private final BitmapFont font;
     private final Matrix4 simpleProjectionMatrix = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
 
@@ -45,6 +46,7 @@ public class Renderer implements Disposable {
         butterfly = createSprite("butterfly.png", 96, 96, Butterfly.WIDTH, Butterfly.HEIGHT);
         clouds = createSprite("clouds.png", 1920, 2697, 1.0f, CLOUD_HEIGHT);
         laser = createSprite("laser.png", 12, 72, Laser.WIDTH, Laser.HEIGHT);
+        dragonflyLaser = createSprite("df_laser.png", 12, 72, Laser.WIDTH, Laser.HEIGHT);
         dragonfly = createSprite("dragonfly.png", 144, 48, DragonFly.WIDTH, DragonFly.HEIGHT);
         life = createSprite("butterfly_life.png", 48, 48, LIFE_WIDTH, LIFE_HEIGHT);
 
@@ -142,7 +144,7 @@ public class Renderer implements Disposable {
         drawSpriteAtPosition(actors.getButterfly().getPosition(), butterfly);
         drawLives(actors.getLives());
         actors.getLasers().forEach(l -> drawSpriteAtPosition(l.getPosition(), laser));
-        actors.getDragonflyLasers().forEach(l -> drawSpriteAtPosition(l.getPosition(), laser));
+        actors.getDragonflyLasers().forEach(l -> drawSpriteAtPosition(l.getPosition(), dragonflyLaser));
         actors.getDragonflies().forEach(df -> drawSpriteAtPosition(df.getPosition(), dragonfly));
     }
 
