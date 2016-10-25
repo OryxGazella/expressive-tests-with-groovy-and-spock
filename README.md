@@ -1,5 +1,11 @@
 # Expressive tests with Spock and Groovy Builders
 
+## Intro
+
+Further reading [here](http://frank.soy/icj2016).
+
+Video [here](https://youtu.be/js7EVbrpQZ0)
+
 ## IDE Integration
 
 ### IntelliJ
